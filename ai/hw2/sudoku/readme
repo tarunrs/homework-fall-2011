@@ -1,0 +1,22 @@
+Sudoku:
+
+To compile the program run:
+
+make
+
+To clean up the pbject files and executable, run:
+
+make clean
+
+To run the Sudoku solver run:
+
+./sudoku <input-filename>
+
+Example: ./sudoku testinput
+
+To input a Sudoku configuration:
+
+Create a file with 4 rows representing the 4 rows of the sudoku.
+In each row enter the values of that column position separated by spaces. If a position is not filled, enter -1 for that position.
+
+An example configuration file is included. "testinput" contains the configuration given in the question.

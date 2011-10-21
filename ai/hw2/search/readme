@@ -1,0 +1,26 @@
+Search:
+
+To compile the program run:
+
+make
+
+To clean up the pbject files and executable, run:
+
+make clean
+
+To run the Search algorothms run:
+
+./solution <search-type> <start-side-string> <end-side-string>
+
+Where <search-type> is one of the following strings:
+- bfs (For breadth first search)
+- dfs (For depth first search)
+- ucs (For uniform cost search)
+- ass (For A* search)
+
+Example: 
+
+./solution bfs ABC DF
+./solution dfs ABCDF
+./solution ucs AB CDF
+./solution ass ABC DF

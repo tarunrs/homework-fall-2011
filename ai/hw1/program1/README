@@ -1,0 +1,27 @@
+Read me!
+
+Intructions to compile and run Program 1 of Homework 1:
+
+A simple reflex agent.
+
+Tested on both stdsun as well as stdlogin
+
+
+To compile the program:
+=======================
+
+Run 'make' in the directory in a Unix environment.
+$ make
+
+
+To run the program:
+=======================
+
+$ ./solution <path to input file>
+
+Example: ./solution hw1-reflex.txt
+
+
+To clean up compiled files (i.e delete 'object' files as well as compiled and linked executable):
+================================================================================================
+$ make clean
