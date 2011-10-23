@@ -4,6 +4,7 @@ class Sphere{
  public:
 	SbVec3f position;
 	float radius;
+	float shininess;
 	SbVec3f scale_vector;
 	SbVec3f translation_vector;
 	SbVec3f rotation_axis;
@@ -18,4 +19,5 @@ class Sphere{
 	void print_details();
 	void print_vector(SbVec3f vec);
 	SbVec3f calculate_normal(SbVec3f *starting_position, SbVec3f *ray_direction, float t);
+	SbVec3f point_of_intersection (SbVec3f *starting_position, SbVec3f *ray_direction, float T);
 };

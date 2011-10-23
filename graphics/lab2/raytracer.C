@@ -104,8 +104,10 @@ bool RayTracer::shade(SbVec3f *ray_origin, SbVec3f *ray_direction, SbColor *colo
 	SbVec3f normal_at_intersection;
 	bool should_color = false;
 	SbVec3f z (0.0,0.0,-1.0);
+	;
 	float color_scale;
     double r_comp, g_comp,b_comp;
+    float comp[3];
 
 
     for(int k =0; k<spheres.size(); k++){
@@ -115,15 +117,45 @@ bool RayTracer::shade(SbVec3f *ray_origin, SbVec3f *ray_direction, SbColor *colo
         {
             if(t_value < t_min) {
                 t_min = t_value;
+
+                SbVec3f V = -(*ray_direction);
                 normal_at_intersection = temp.calculate_normal(ray_origin, ray_direction, t_value);
                 normal_at_intersection.normalize();
-                color_scale = normal_at_intersection.dot(z);
-                r_comp = fabs(color_scale * temp.material->diffuseColor[0][0]);
-                g_comp = fabs(color_scale  * temp.material->diffuseColor[0][1]);
-                b_comp = fabs(color_scale * temp.material->diffuseColor[0][2]);
+                SbVec3f point_of_intersection = temp.point_of_intersection( ray_origin, ray_direction, t_value);
 
-                color->setValue(r_comp*255, g_comp*255, b_comp*255);
-                should_color = true;
+                for(int i = 0; i <3; i++) // set the ambient color component
+                        comp[i] = (temp.material->diffuseColor[0][i]);
+                // iterate through all the lights and add the diffuse and specular component
+
+                for(int j = 0; j < lights.size(); j++){
+
+                    SbVec3f L = lights.at(j).position - point_of_intersection;
+                    SbVec3f H = (V + L);
+                    H.normalize();
+                    L.normalize();
+                    float NdotL = normal_at_intersection.dot(L);
+                    float cos_theta = H.dot(normal_at_intersection);
+
+                    //std::cout<<"light position";
+                    //print_vector(lights.front().position);
+
+                    //std::cout<<"point of interection";
+                    //print_vector(point_of_intersection);
+
+                    for(int i = 0; i <3; i++){
+                        //comp[i] = (temp.material->diffuseColor[0][i]);
+                        comp[i] += ( NdotL * temp.material->diffuseColor[0][i] );
+                        comp[i] += ( pow(cos_theta, 10) * temp.material->specularColor[0][i] );
+                        comp[i] = fabs(comp[i] );
+                        //std::cout << "Diff Color : " << temp.material->diffuseColor[0][i]<<std::endl;
+                        //std::cout << "specularColor : " << temp.material->specularColor[0][i]<<std::endl;
+                        //std::cout << "NdotL : " << NdotL<<std::endl;
+                        //std::cout << "cos_theta: " << cos_theta<<std::endl;
+                    }
+                }
+                    color->setValue(comp[0]*255, comp[1]*255, comp[2]*255);
+                    //print_vector((comp));
+                    should_color = true;
             }
         }
     }

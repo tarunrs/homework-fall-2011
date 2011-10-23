@@ -8,6 +8,7 @@ Sphere::Sphere ( OSUObjectData * obj) {
 	SoSphere * sph = (SoSphere *)obj->shape;
 	radius = sph->radius.getValue();
 	material = obj->material;
+	//shininess = obj->material->shininess.getNum();
 	SoTransform * transformation = obj->transformation;
 	transform(transformation);
 	//print_details();
@@ -65,6 +66,18 @@ bool Sphere::intersection (SbVec3f *starting_position, SbVec3f *ray_direction, f
 	}
 }
 
+SbVec3f Sphere::point_of_intersection (SbVec3f *starting_position, SbVec3f *ray_direction, float T){
+	double a, b, c,d;
+	SbVec3f sme ;
+	SbVec3f poi;
+	sme = *ray_direction;
+	poi= *starting_position + (T * (*ray_direction));
+	print_vector(poi);
+
+	return poi;
+}
+
+
 double Sphere::calculate_determinant(double a, double b, double c){
 	double d = 0;
         d = (b*b) - (4*a*c);
@@ -89,3 +102,9 @@ SbVec3f Sphere::calculate_normal(SbVec3f *starting_position, SbVec3f *ray_direct
     normal = (*starting_position + (t *(*ray_direction))) - position;
     return normal;
 }
+
+//SbVec3f Sphere::calculate_point_of_intersection(SbVec3f *starting_position, SbVec3f *ray_direction, float t){
+  //  SbVec3f normal;
+   // normal = (*starting_position + (t *(*ray_direction))) - position;
+   // return normal;
+//}
