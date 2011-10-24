@@ -3,6 +3,7 @@
 class Sphere{
  public:
 	SbVec3f position;
+	bool isShiny;
 	float radius;
 	float shininess;
 	SbVec3f scale_vector;

@@ -99,7 +99,26 @@ double RayTracer::calculate_solution(double d, double b, double a){
 
 }
 
-bool RayTracer::shade(SbVec3f *ray_origin, SbVec3f *ray_direction, SbColor *color){
+bool RayTracer::shadow_ray_intersection(SbVec3f *point_of_intersection, int current_sphere){
+
+    float t_value;
+    SbVec3f ray_direction;
+
+    for(int i =0; i< lights.size(); i++){
+        ray_direction = *point_of_intersection - lights.at(i).position;
+        ray_direction.normalize();
+        for(int j=0; j< spheres.size(); j++){
+            if(j == current_sphere) continue;
+            if(spheres.at(j).intersection(point_of_intersection, &ray_direction, &t_value))
+                return true;
+
+        }
+    }
+    return false;
+}
+
+
+bool RayTracer::shade(SbVec3f *ray_origin, SbVec3f *ray_direction, SbColor *color, int recursionDepth){
 	float t_value, t_min = 999;
 	SbVec3f normal_at_intersection;
 	bool should_color = false;
@@ -126,34 +145,55 @@ bool RayTracer::shade(SbVec3f *ray_origin, SbVec3f *ray_direction, SbColor *colo
                 for(int i = 0; i <3; i++) // set the ambient color component
                         comp[i] = (temp.material->diffuseColor[0][i]);
                 // iterate through all the lights and add the diffuse and specular component
+                bool shadowFlag = shadow_ray_intersection(&point_of_intersection, k);
+                shadowFlag = false;
+                SbColor refColor;
+                refColor.setValue(0,0,0);
+                if(!shadowFlag){
+                    for(int j = 0; j < lights.size(); j++){
 
-                for(int j = 0; j < lights.size(); j++){
+                        SbVec3f L = lights.at(j).position - point_of_intersection;
+                        SbVec3f H = (V + L);
+                        H.normalize();
+                        L.normalize();
+                        float NdotL = normal_at_intersection.dot(L);
+                        float cos_theta = H.dot(normal_at_intersection);
 
-                    SbVec3f L = lights.at(j).position - point_of_intersection;
-                    SbVec3f H = (V + L);
-                    H.normalize();
-                    L.normalize();
-                    float NdotL = normal_at_intersection.dot(L);
-                    float cos_theta = H.dot(normal_at_intersection);
+                        //std::cout<<"light position";
+                        //print_vector(lights.front().position);
 
-                    //std::cout<<"light position";
-                    //print_vector(lights.front().position);
+                        //std::cout<<"point of interection";
+                        //print_vector(point_of_intersection);
 
-                    //std::cout<<"point of interection";
-                    //print_vector(point_of_intersection);
+                        for(int i = 0; i <3; i++){
+                            //comp[i] = (temp.material->diffuseColor[0][i]);
+                            comp[i] += ( NdotL * temp.material->diffuseColor[0][i] );
+                            comp[i] += ( pow(cos_theta, 20) * temp.material->specularColor[0][i] );
+                            comp[i] = fabs(comp[i] );
+                            //std::cout << "Diff Color : " << temp.material->diffuseColor[0][i]<<std::endl;
+                            //std::cout << "specularColor : " << temp.material->specularColor[0][i]<<std::endl;
+                            //std::cout << "NdotL : " << NdotL<<std::endl;
+                            //std::cout << "cos_theta: " << cos_theta<<std::endl;
+                        }
+                    }
 
-                    for(int i = 0; i <3; i++){
-                        //comp[i] = (temp.material->diffuseColor[0][i]);
-                        comp[i] += ( NdotL * temp.material->diffuseColor[0][i] );
-                        comp[i] += ( pow(cos_theta, 10) * temp.material->specularColor[0][i] );
-                        comp[i] = fabs(comp[i] );
-                        //std::cout << "Diff Color : " << temp.material->diffuseColor[0][i]<<std::endl;
-                        //std::cout << "specularColor : " << temp.material->specularColor[0][i]<<std::endl;
-                        //std::cout << "NdotL : " << NdotL<<std::endl;
-                        //std::cout << "cos_theta: " << cos_theta<<std::endl;
+                    if(recursionDepth < 2){
+                        if(temp.isShiny){
+                            // compute replection of the ray, R1
+
+                            SbVec3f R1;
+                            R1 = (-2 * (V.dot(normal_at_intersection) * normal_at_intersection)) + V;
+                            R1.normalize();
+                            shade(&point_of_intersection, &R1, &refColor, recursionDepth+1);
+                            // add the color returned.
+                        }
                     }
                 }
-                    color->setValue(comp[0]*255, comp[1]*255, comp[2]*255);
+                    //color->setValue(((comp[0] *255)+ temp.shininess * refColor[0]),
+                     //               ((comp[1] *255)+ temp.shininess * refColor[1]),
+                      //              ((comp[2] *255)+ temp.shininess * refColor[2]));
+                    color->setValue(comp[0] *255,comp[1]*255, comp[2]*255);
+                    //color =  ( );
                     //print_vector((comp));
                     should_color = true;
             }
@@ -178,7 +218,7 @@ void RayTracer::trace_rays(){
             pix_pos = calculate_pixel_location(i,j);
             d_vec  = pix_pos - camera->position;
 
-            bool should_color = shade(&(camera->position), &d_vec, &color);
+            bool should_color = shade(&(camera->position), &d_vec, &color, 1);
             if(should_color)
             {
                 //r_comp = fabs(color_scale * temp.material->diffuseColor[0][0]);

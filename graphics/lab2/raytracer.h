@@ -31,7 +31,7 @@ class RayTracer{
 	void read_lights();
 	void calculate_eye_coordinate_system(Camera *cam);
 	void trace_rays();
-	bool shade(SbVec3f *ray_origin, SbVec3f *ray_direction, SbColor *color);
+	bool shade(SbVec3f *ray_origin, SbVec3f *ray_direction, SbColor *color, int recursionDepth);
 	//bool RayTracer::shade(SbVec3f *ray_origin, SbVec3f *ray_direction, SbColor *color){
 	//void shade(float* ray_origin, float* ray_direction, float *color);
 	void print_vector(SbVec3f vec);
@@ -42,6 +42,7 @@ class RayTracer{
 	void write_to_file(std::vector<std::vector<Pixel> > img);
 	void open_file();
     void close_file();
+    bool shadow_ray_intersection(SbVec3f *point_of_intersection, int current_sphere);
     int min(float val);
 };
 

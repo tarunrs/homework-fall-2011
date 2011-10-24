@@ -8,7 +8,10 @@ Sphere::Sphere ( OSUObjectData * obj) {
 	SoSphere * sph = (SoSphere *)obj->shape;
 	radius = sph->radius.getValue();
 	material = obj->material;
-	//shininess = obj->material->shininess.getNum();
+	shininess = obj->material->shininess.getNum();
+	//shininess = 0.1;
+	if(shininess > 0) isShiny = true;
+	//obj->material->shininess.get
 	SoTransform * transformation = obj->transformation;
 	transform(transformation);
 	//print_details();
@@ -50,6 +53,7 @@ void Sphere::transform(SoTransform *transformation){
 	position = pos;
     print_vector(position);
 }
+
 bool Sphere::intersection (SbVec3f *starting_position, SbVec3f *ray_direction, float* T){
 	double a, b, c,d;
 	SbVec3f emc ;
