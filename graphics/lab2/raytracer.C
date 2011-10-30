@@ -1,9 +1,16 @@
 #include "raytracer.h"
 
-RayTracer::RayTracer(std::string ip_filename, std::string opfilename, int xresolution, int yresolution){
+RayTracer::RayTracer(std::string ip_filename, std::string opfilename, int xresolution, int yresolution,int s_on, int r_on){
 	x_resolution = xresolution;
 	y_resolution = yresolution;
 	op_filename = opfilename;
+	shadow_on = s_on;
+	if(shadow_on)
+        std::cout<<"Shadow On"<<std::endl;
+	reflection_on = r_on;
+	if(reflection_on )
+        std::cout<<"Reflection On"<<std::endl;
+
 	read_open_inventor_scene(ip_filename);
 }
 
@@ -27,7 +34,9 @@ void RayTracer::read_lights(){
 			if(light_type == SoPointLight::getClassTypeId()){
 				SoPointLight * point_light = (SoPointLight*) light;
 				SbVec3f location = point_light->location.getValue();
-				Light * new_light = new Light(location);
+				float intensity = point_light->intensity.getValue();
+                SbVec3f color = point_light->color.getValue();
+				Light * new_light = new Light(location, intensity, color);
 				//new_light->print_details();
 				lights.push_back(*new_light);
 			}
@@ -80,126 +89,100 @@ void RayTracer::read_objects(){
         }
 }
 
-double RayTracer::calculate_determinant(double a, double b, double c){
-	double d = 0;
-	d = (b*b) - (4*a*c);
-	if(d < 1) return -1;
-	else return sqrt(d);
-}
-
-double RayTracer::calculate_solution(double d, double b, double a){
-	double sol1, sol2;
-	if(d == 0)
-		return ((-b)/(2 * a));
-
-	sol1 = (((-b)+d)/(2 * a));
-	sol2 = (((-b)-d)/(2 * a));
-	if(sol1 < sol2) return sol1;
-	else return sol2;
-
-}
-
-bool RayTracer::shadow_ray_intersection(SbVec3f *point_of_intersection, int current_sphere){
+bool RayTracer::shadow_ray_intersection(SbVec3f *point_of_intersection, int light_source){
 
     float t_value;
     SbVec3f ray_direction;
+    float epsilon = 0.01;
+    ray_direction = lights.at(light_source).position - *point_of_intersection ;
+    ray_direction.normalize();
+    SbVec3f poi;
+    poi = *point_of_intersection + (epsilon * ray_direction);
+    for(int j=0; j< spheres.size(); j++){
+        if(spheres.at(j).intersection(&poi, &ray_direction, &t_value))
+            return true;
 
-    for(int i =0; i< lights.size(); i++){
-        ray_direction = *point_of_intersection - lights.at(i).position;
-        ray_direction.normalize();
-        for(int j=0; j< spheres.size(); j++){
-            if(j == current_sphere) continue;
-            if(spheres.at(j).intersection(point_of_intersection, &ray_direction, &t_value))
-                return true;
-
-        }
     }
     return false;
 }
 
 
-bool RayTracer::shade(SbVec3f *ray_origin, SbVec3f *ray_direction, SbColor *color, int recursionDepth){
+bool RayTracer::shade(SbVec3f *ray_origin, SbVec3f *ray_direction, SbVec3f *retColor, int recursionDepth){
 	float t_value, t_min = 999;
 	SbVec3f normal_at_intersection;
 	bool should_color = false;
-	SbVec3f z (0.0,0.0,-1.0);
-	;
-	float color_scale;
-    double r_comp, g_comp,b_comp;
-    float comp[3];
-
-
+    SbVec3f color;
+    color[0] = 0.0;
+    color[1] = 0.0;
+    color[2] = 0.0;
     for(int k =0; k<spheres.size(); k++){
         Sphere temp = spheres.at(k);
 
         if(temp.intersection(ray_origin, ray_direction, &t_value))
         {
-            if(t_value < t_min) {
-                t_min = t_value;
+            if(t_value < t_min && t_value > 0 && t_value !=999) {
 
+                t_min = t_value;
                 SbVec3f V = -(*ray_direction);
+                V.normalize();
+                //SbVec3f V = (*ray_direction);
                 normal_at_intersection = temp.calculate_normal(ray_origin, ray_direction, t_value);
                 normal_at_intersection.normalize();
                 SbVec3f point_of_intersection = temp.point_of_intersection( ray_origin, ray_direction, t_value);
 
-                for(int i = 0; i <3; i++) // set the ambient color component
-                        comp[i] = (temp.material->diffuseColor[0][i]);
+                for(int i = 0; i <3; i++) {// set the ambient color component
+                        color[i] = (0.2 *  temp.material->ambientColor[0][i]);
+                }
                 // iterate through all the lights and add the diffuse and specular component
-                bool shadowFlag = shadow_ray_intersection(&point_of_intersection, k);
-                shadowFlag = false;
-                SbColor refColor;
-                refColor.setValue(0,0,0);
-                if(!shadowFlag){
-                    for(int j = 0; j < lights.size(); j++){
+                for(int j = 0; j < lights.size(); j++){
 
-                        SbVec3f L = lights.at(j).position - point_of_intersection;
-                        SbVec3f H = (V + L);
-                        H.normalize();
-                        L.normalize();
-                        float NdotL = normal_at_intersection.dot(L);
-                        float cos_theta = H.dot(normal_at_intersection);
 
-                        //std::cout<<"light position";
-                        //print_vector(lights.front().position);
+                        bool shadowFlag = false;
+                        if(shadow_on )
+                            shadowFlag = shadow_ray_intersection(&point_of_intersection, j );
+                        if(!shadowFlag){
 
-                        //std::cout<<"point of interection";
-                        //print_vector(point_of_intersection);
+                            SbVec3f L = lights.at(j).position - point_of_intersection;
+                            L.normalize();
+                            SbVec3f H = (V + L);
+                            H.normalize();
 
-                        for(int i = 0; i <3; i++){
-                            //comp[i] = (temp.material->diffuseColor[0][i]);
-                            comp[i] += ( NdotL * temp.material->diffuseColor[0][i] );
-                            comp[i] += ( pow(cos_theta, 20) * temp.material->specularColor[0][i] );
-                            comp[i] = fabs(comp[i] );
-                            //std::cout << "Diff Color : " << temp.material->diffuseColor[0][i]<<std::endl;
-                            //std::cout << "specularColor : " << temp.material->specularColor[0][i]<<std::endl;
-                            //std::cout << "NdotL : " << NdotL<<std::endl;
-                            //std::cout << "cos_theta: " << cos_theta<<std::endl;
+                            float NdotL = normal_at_intersection.dot(L);
+                            float cos_theta = H.dot(normal_at_intersection);
+
+                            for(int i = 0; i <3; i++){
+                                if(NdotL > 0)
+                                    color[i] += ( NdotL * temp.material->diffuseColor[0][i]);// * lights.at(j).intensity * lights.at(j).color[i]);
+                                if(cos_theta > 0)
+                                    color[i] += ( pow(cos_theta, 50) * temp.material->specularColor[0][i]);// * lights.at(j).intensity * lights.at(j).color[i]);
+                            }
                         }
-                    }
 
-                    if(recursionDepth < 2){
+                }
+                SbVec3f refColor(0.0,0.0,0.0);
+                // if the current depth of recustion is less than the maximum depth,
+                //reflect the ray and add the color returned dude to the result of reflection
+                if(reflection_on && recursionDepth < 2){
                         if(temp.isShiny){
                             // compute replection of the ray, R1
-
+                            V = -1 * V;
+                            //V.normalize();
                             SbVec3f R1;
                             R1 = (-2 * (V.dot(normal_at_intersection) * normal_at_intersection)) + V;
                             R1.normalize();
                             shade(&point_of_intersection, &R1, &refColor, recursionDepth+1);
-                            // add the color returned.
+                            color = color + (temp.shininess * refColor);
+
                         }
                     }
-                }
-                    //color->setValue(((comp[0] *255)+ temp.shininess * refColor[0]),
-                     //               ((comp[1] *255)+ temp.shininess * refColor[1]),
-                      //              ((comp[2] *255)+ temp.shininess * refColor[2]));
-                    color->setValue(comp[0] *255,comp[1]*255, comp[2]*255);
-                    //color =  ( );
-                    //print_vector((comp));
-                    should_color = true;
+                should_color = true;
             }
-        }
-    }
 
+        }
+        //print_vector(color);
+    }
+    //print_vector(color);
+    *retColor = color;
     return should_color;
 }
 
@@ -208,27 +191,26 @@ void RayTracer::trace_rays(){
 	SbVec3f pix_pos, d_vec;
 	double a,b,c;
 	float color_scale;
-	SbColor color;
+	SbVec3f color;
     std::vector<Pixel> image_row;
 	std::cout << "Tracing rays"<<std::endl;
+    color[0] = 0.0;
+    color[1] = 0.0;
+    color[2] = 0.0;
 
 	for (i=0; i < y_resolution; i++){
         image_row.clear();
 	    for (j=0; j < x_resolution; j++) {
             pix_pos = calculate_pixel_location(i,j);
             d_vec  = pix_pos - camera->position;
-
+            d_vec.normalize();
             bool should_color = shade(&(camera->position), &d_vec, &color, 1);
             if(should_color)
             {
-                //r_comp = fabs(color_scale * temp.material->diffuseColor[0][0]);
-                //g_comp = fabs(color_scale  * temp.material->diffuseColor[0][1]);
-                //b_comp = fabs(color_scale * temp.material->diffuseColor[0][2]);
-
                 image_row.push_back(Pixel(min(color[0]), min(color[1]), min(color[2])));
             }
             else
-                image_row.push_back(Pixel(55,55,55));
+                image_row.push_back(Pixel(0,0,0));
 
         }
         image.push_back(image_row);
@@ -239,11 +221,7 @@ void RayTracer::trace_rays(){
 	std::cout<<"Done Tracing"<<std::endl;
 	return;
 }
-/*
-void  RayTracer::shade(float* ray_origin, float* ray_direction, float *color){
- return;
-}
-*/
+
 void RayTracer::print_vector(SbVec3f vec){
 	std::cout<<"( "
 		<< vec[0]<<","
@@ -274,7 +252,8 @@ void RayTracer::write_to_file(std::vector<std::vector<Pixel> > img){
 }
 
 int RayTracer::min(float val){
-    return (val > 255 ? 255 : floor(val));
+    val = fabs(val);
+    return ( val*255 > 255 ? 255 : floor(val*255));
 
 }
 

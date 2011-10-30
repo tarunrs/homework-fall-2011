@@ -8,13 +8,12 @@ Sphere::Sphere ( OSUObjectData * obj) {
 	SoSphere * sph = (SoSphere *)obj->shape;
 	radius = sph->radius.getValue();
 	material = obj->material;
-	shininess = obj->material->shininess.getNum();
-	//shininess = 0.1;
+    const float* s = obj->material->shininess.getValues(0);
+    shininess = s[0];
+	//shininess = obj->material->shininess.getNum();
 	if(shininess > 0) isShiny = true;
-	//obj->material->shininess.get
 	SoTransform * transformation = obj->transformation;
 	transform(transformation);
-	//print_details();
 }
 
 void Sphere::print_details(){
@@ -66,7 +65,10 @@ bool Sphere::intersection (SbVec3f *starting_position, SbVec3f *ray_direction, f
 		return false;
 	else{
 	    *T = calculate_solution(d,b,a);
-		return true;
+	    if(*T != -1)
+		  return true;
+        else
+          return false;
 	}
 }
 
@@ -74,10 +76,7 @@ SbVec3f Sphere::point_of_intersection (SbVec3f *starting_position, SbVec3f *ray_
 	double a, b, c,d;
 	SbVec3f sme ;
 	SbVec3f poi;
-	sme = *ray_direction;
 	poi= *starting_position + (T * (*ray_direction));
-	print_vector(poi);
-
 	return poi;
 }
 
@@ -96,8 +95,12 @@ double Sphere::calculate_solution(double d, double b, double a){
 
         sol1 = (((-b)+d)/(2 * a));
         sol2 = (((-b)-d)/(2 * a));
-        if(sol1 < sol2) return sol1;
-        else return sol2;
+        if(sol1 < 0 && sol2 < 0)
+         return -1;
+        if(sol1 < sol2)
+         return sol1;
+        else
+         return sol2;
 
 }
 
