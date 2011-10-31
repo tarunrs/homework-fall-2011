@@ -37,7 +37,6 @@ void RayTracer::read_lights(){
 				float intensity = point_light->intensity.getValue();
                 SbVec3f color = point_light->color.getValue();
 				Light * new_light = new Light(location, intensity, color);
-				//new_light->print_details();
 				lights.push_back(*new_light);
 			}
 		}
@@ -123,11 +122,10 @@ bool RayTracer::shade(SbVec3f *ray_origin, SbVec3f *ray_direction, SbVec3f *retC
             if(t_value < t_min && t_value > 0 && t_value !=999) {
 
                 t_min = t_value;
-                SbVec3f V = -(*ray_direction);
+                SbVec3f V = -(*ray_direction); //view vector
                 V.normalize();
-                //SbVec3f V = (*ray_direction);
                 normal_at_intersection = temp.calculate_normal(ray_origin, ray_direction, t_value);
-                normal_at_intersection.normalize();
+                normal_at_intersection.normalize(); // N vector at the point of intersection
                 SbVec3f point_of_intersection = temp.point_of_intersection( ray_origin, ray_direction, t_value);
 
                 for(int i = 0; i <3; i++) {// set the ambient color component
@@ -136,7 +134,6 @@ bool RayTracer::shade(SbVec3f *ray_origin, SbVec3f *ray_direction, SbVec3f *retC
                 // iterate through all the lights and add the diffuse and specular component
                 for(int j = 0; j < lights.size(); j++){
 
-
                         bool shadowFlag = false;
                         if(shadow_on )
                             shadowFlag = shadow_ray_intersection(&point_of_intersection, j );
@@ -144,17 +141,21 @@ bool RayTracer::shade(SbVec3f *ray_origin, SbVec3f *ray_direction, SbVec3f *retC
 
                             SbVec3f L = lights.at(j).position - point_of_intersection;
                             L.normalize();
-                            SbVec3f H = (V + L);
-                            H.normalize();
+                            SbVec3f R;
+                            R = (2 * normal_at_intersection.dot(L) * normal_at_intersection) - L;
+                            R.normalize();
+                            //SbVec3f H = (V + L);//is using half way vector
+                            //H.normalize();//is using half way vector
+                            //float cos_theta = H.dot(normal_at_intersection); //is using half way vector
 
                             float NdotL = normal_at_intersection.dot(L);
-                            float cos_theta = H.dot(normal_at_intersection);
+                            float cos_theta = V.dot(R);
 
                             for(int i = 0; i <3; i++){
                                 if(NdotL > 0)
-                                    color[i] += ( NdotL * temp.material->diffuseColor[0][i]);// * lights.at(j).intensity * lights.at(j).color[i]);
+                                    color[i] += ( NdotL * temp.material->diffuseColor[0][i] * lights.at(j).intensity * lights.at(j).color[i]);
                                 if(cos_theta > 0)
-                                    color[i] += ( pow(cos_theta, 50) * temp.material->specularColor[0][i]);// * lights.at(j).intensity * lights.at(j).color[i]);
+                                    color[i] += ( pow(cos_theta, 20) * temp.material->specularColor[0][i]* lights.at(j).intensity * lights.at(j).color[i]);
                             }
                         }
 
@@ -162,13 +163,11 @@ bool RayTracer::shade(SbVec3f *ray_origin, SbVec3f *ray_direction, SbVec3f *retC
                 SbVec3f refColor(0.0,0.0,0.0);
                 // if the current depth of recustion is less than the maximum depth,
                 //reflect the ray and add the color returned dude to the result of reflection
-                if(reflection_on && recursionDepth < 2){
+                if(reflection_on && recursionDepth < 4){
                         if(temp.isShiny){
                             // compute replection of the ray, R1
-                            V = -1 * V;
-                            //V.normalize();
                             SbVec3f R1;
-                            R1 = (-2 * (V.dot(normal_at_intersection) * normal_at_intersection)) + V;
+                            R1 = (-2 *(normal_at_intersection.dot(*ray_direction)* normal_at_intersection)) + *ray_direction;
                             R1.normalize();
                             shade(&point_of_intersection, &R1, &refColor, recursionDepth+1);
                             color = color + (temp.shininess * refColor);
@@ -179,9 +178,7 @@ bool RayTracer::shade(SbVec3f *ray_origin, SbVec3f *ray_direction, SbVec3f *retC
             }
 
         }
-        //print_vector(color);
     }
-    //print_vector(color);
     *retColor = color;
     return should_color;
 }
@@ -253,6 +250,7 @@ void RayTracer::write_to_file(std::vector<std::vector<Pixel> > img){
 
 int RayTracer::min(float val){
     val = fabs(val);
+    // multiply the color component by white light and clamp it to 255
     return ( val*255 > 255 ? 255 : floor(val*255));
 
 }
