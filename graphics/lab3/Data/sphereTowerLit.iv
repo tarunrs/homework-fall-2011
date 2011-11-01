@@ -1,0 +1,606 @@
+#Inventor V2.1 ascii
+
+PerspectiveCamera {
+    position	-8.23257 -0.460905 -4.33873
+    orientation	-0.759558 -0.405665 0.508436  2.43461
+    nearDistance	9.65862
+    farDistance	18.4742
+    focalDistance	14.0381
+    heightAngle	0.785398
+}
+
+Separator {
+PointLight {
+	on TRUE
+	intensity .6
+	color 1 1 1
+	location -10 -10 -10
+	
+    }
+PointLight {
+	on TRUE
+	intensity .7
+	color 1 1 1
+	location 10 50 10
+	
+    }
+PointLight {
+	on TRUE
+	intensity .4
+	color 1 1 1
+	location -10 -20 -0
+	
+    }
+    Separator {
+	Separator {
+	    Separator {
+		
+		Transform {
+		    translation	1.16652 -0.239667 0.0962752
+		    center	1.55159 0.0125609 0.445302
+		}
+		Separator {
+		    Separator {
+			Transform {
+			    translation	1.74758 0.0125698 1.55262
+			    rotation	0 -1 0  0.0531816
+			    scaleFactor	0.739785 0.739786 0.739785
+			    center	-0.109751 -3.40566e-05 -4.25488
+			}
+			Material {
+			    diffuseColor	0.7 0.7 1
+      			    specularColor 1 1 1
+      			    shininess 1.0
+      			    ambientColor 0.2 0.2 0.2
+			}
+			Sphere {
+			}
+		    }
+		}
+	    }
+	    Separator {
+		
+		Transform {
+		    translation	2.64033 -0.174864 0.140097
+		    rotation	-0.998274 0.0111487 0.0576628  0.382618
+		    scaleFactor	0.999021 0.99902 0.999021
+		    center	1.55159 0.0125609 0.445302
+		}
+		Separator {
+		    Separator {
+			Transform {
+			    translation	1.74758 0.0125698 1.55262
+			    rotation	0 -1 0  0.0531816
+			    scaleFactor	0.739785 0.739786 0.739785
+			    center	-0.109751 -3.40566e-05 -4.25488
+			}
+			Material {
+			    diffuseColor	0.6 0.6 1
+			    specularColor 1 1 1
+      			    shininess 0.9
+      			    ambientColor 0.2 0.2 0.2
+			}
+			Sphere {
+			}
+		    }
+		}
+	    }
+	    Separator {
+		
+		Transform {
+		    translation	1.9552 -1.37316 0.551601
+		    rotation	-1 0 0  0.381973
+		    scaleFactor	0.999021 0.99902 0.999021
+		    center	1.55159 0.0125609 0.445302
+		}
+		Separator {
+		    Separator {
+			Transform {
+			    translation	1.74758 0.0125698 1.55262
+			    rotation	0 -1 0  0.0531816
+			    scaleFactor	0.739785 0.739786 0.739785
+			    center	-0.109751 -3.40566e-05 -4.25488
+			}
+			Material {
+			    diffuseColor	0.5 0.5 1
+			    specularColor 1 1 1
+      			    shininess 0.8
+      			    ambientColor 0.2 0.2 0.2
+			}
+			Sphere {
+			}
+		    }
+		}
+	    }
+	    Separator {
+		
+		Transform {
+		    translation	3.4106 -1.31024 0.526329
+		    rotation	-1 0 0  0.381973
+		    scaleFactor	0.999021 0.99902 0.999021
+		    center	1.55159 0.0125609 0.445302
+		}
+		Separator {
+		    Separator {
+			Transform {
+			    translation	1.75755 0.00153035 1.55315
+			    rotation	0 -1 0  0.0531816
+			    scaleFactor	0.739785 0.739786 0.739785
+			    center	-0.109751 -3.40566e-05 -4.25488
+			}
+			Material {
+			    diffuseColor	0.7 0.7 1
+			    specularColor 1 1 1
+      			    shininess 1.0
+      			    ambientColor 0.2 0.2 0.2
+			}
+			Sphere {
+			}
+		    }
+		}
+	    }
+	    Separator {
+		
+		Transform {
+		    translation	4.09136 -0.132372 0.0531747
+		    rotation	-1 0 0  0.381973
+		    scaleFactor	0.999021 0.99902 0.999021
+		    center	1.55159 0.0125609 0.445302
+		}
+		Separator {
+		    Separator {
+			Transform {
+			    translation	1.74758 0.0125698 1.55262
+			    rotation	0 -1 0  0.0531816
+			    scaleFactor	0.739785 0.739786 0.739785
+			    center	-0.109751 -3.40566e-05 -4.25488
+			}
+			Material {
+			    diffuseColor	0.6 0.6 1
+			    specularColor 1 1 1
+      			    shininess  0.9
+     			    ambientColor 0.2 0.2 0.2
+			}
+			Sphere {
+			}
+		    }
+		}
+	    }
+	    Separator {
+		
+		Transform {
+		    translation	4.89895 -1.23991 0.498077
+		    rotation	-1 0 0  0.381973
+		    scaleFactor	0.999021 0.99902 0.999021
+		    center	1.55159 0.0125609 0.445302
+		}
+		Separator {
+		    Separator {
+			Transform {
+			    translation	1.74758 0.0125698 1.55262
+			    rotation	0 -1 0  0.0531816
+			    scaleFactor	0.739785 0.739786 0.739785
+			    center	-0.109751 -3.40566e-05 -4.25488
+			}
+			Material {
+			    diffuseColor	0.5 0.5 1
+			    specularColor 1 1 1
+      			    shininess  0.8
+     			    ambientColor 0.2 0.2 0.2
+			}
+			Sphere {
+			}
+		    }
+		}
+	    }
+	    Separator {
+		
+		Transform {
+		    translation	5.60564 -0.0192396 0.00772896
+		    rotation	-1 0 0  0.381973
+		    scaleFactor	0.999021 0.99902 0.999021
+		    center	1.55159 0.0125609 0.445302
+		}
+		Separator {
+		    Separator {
+			Transform {
+			    translation	1.69318 0.00536807 1.54972
+			    rotation	0 -1 0  0.0531816
+			    scaleFactor	0.739785 0.739786 0.739785
+			    center	-0.109751 -3.40566e-05 -4.25488
+			}
+			Material {
+			    diffuseColor	0.7 0.7 1
+			    specularColor 1 1 1
+      			    shininess  0.7
+     			    ambientColor 0.2 0.2 0.2
+			}
+			Sphere {
+			}
+		    }
+		}
+	    }
+	    Separator {
+		
+		Transform {
+		    translation	2.7609 -2.51243 1.00925
+		    rotation	-1 0 0  0.381973
+		    scaleFactor	0.999021 0.99902 0.999021
+		    center	1.55159 0.0125609 0.445302
+		}
+		Separator {
+		    Separator {
+			Transform {
+			    translation	1.74758 0.0125698 1.55262
+			    rotation	0 -1 0  0.0531816
+			    scaleFactor	0.739785 0.739786 0.739785
+			    center	-0.109751 -3.40566e-05 -4.25488
+			}
+			Material {
+			    diffuseColor	0.6 0.6 1
+			    specularColor 1 1 1
+      			    shininess  0.6
+     			    ambientColor 0.2 0.2 0.2
+			}
+			Sphere {
+			}
+		    }
+		}
+	    }
+	    Separator {
+		
+		Transform {
+		    translation	4.17675 -2.42777 0.975242
+		    rotation	-1 0 0  0.381973
+		    scaleFactor	0.999021 0.99902 0.999021
+		    center	1.55159 0.0125609 0.445302
+		}
+		Separator {
+		    Separator {
+			Transform {
+			    translation	1.74758 0.0125698 1.55262
+			    rotation	0 -1 0  0.0531816
+			    scaleFactor	0.739785 0.739786 0.739785
+			    center	-0.109751 -3.40566e-05 -4.25488
+			}
+			Material {
+			    diffuseColor	0.5 0.5 1
+			    specularColor 1 1 1
+      			    shininess  1.0
+     			    ambientColor 0.2 0.2 0.2
+			}
+			Sphere {
+			}
+		    }
+		}
+	    }
+	    Separator {
+		
+		Transform {
+		    translation	3.56004 -3.64455 1.46403
+		    rotation	-1 0 0  0.381973
+		    scaleFactor	0.999021 0.99902 0.999021
+		    center	1.55159 0.0125609 0.445302
+		}
+		Separator {
+		    Separator {
+			Transform {
+			    translation	1.74758 0.0125698 1.55262
+			    rotation	0 -1 0  0.0531816
+			    scaleFactor	0.739785 0.739786 0.739785
+			    center	-0.109751 -3.40566e-05 -4.25488
+			}
+			Material {
+			    diffuseColor	0.7 0.7 1
+			    specularColor 1 1 1
+      			    shininess  0.9
+   			    ambientColor 0.2 0.2 0.2
+			}
+			Sphere {
+			}
+		    }
+		}
+	    }
+	    Separator {
+		
+		Transform {
+		    translation	2.07788 -0.902491 -0.659081
+		    rotation	-1 0 0  0.381973
+		    scaleFactor	0.999021 0.99902 0.999021
+		    center	1.55159 0.0125609 0.445302
+		}
+		Separator {
+		    Separator {
+			Transform {
+			    translation	1.58281 0.00455216 1.53974
+			    rotation	0 -1 0  0.0531816
+			    scaleFactor	0.739785 0.739786 0.739785
+			    center	-0.109751 -3.40566e-05 -4.25488
+			}
+			Material {
+			    diffuseColor	0.4 0.4 1
+			    specularColor 1 1 1
+      			    shininess  0.8
+   			    ambientColor 0.2 0.2 0.2
+			}
+			Sphere {
+			}
+		    }
+		}
+	    }
+	    Separator {
+		
+		Transform {
+		    translation	2.85353 -1.88515 -0.239285
+		    rotation	-1 0 0  0.381973
+		    scaleFactor	0.999021 0.99902 0.999021
+		    center	1.55159 0.0125609 0.445302
+		}
+		Separator {
+		    Separator {
+			Transform {
+			    translation	1.66642 -0.0609054 1.5483
+			    rotation	0 -1 0  0.0531816
+			    scaleFactor	0.739785 0.739786 0.739785
+			    center	-0.109751 -3.40566e-05 -4.25488
+			}
+			Material {
+			    diffuseColor	0.3 0.3 1
+			    specularColor 1 1 1
+      			    shininess  0.7
+   			    ambientColor 0.2 0.2 0.2
+			}
+			Sphere {
+			}
+		    }
+		}
+	    }
+	    Separator {
+		
+		Transform {
+		    translation	3.5326 -2.86898 0.130865
+		    rotation	-1 0 0  0.381973
+		    scaleFactor	0.999021 0.99902 0.999021
+		    center	1.55159 0.0125609 0.445302
+		}
+		Separator {
+		    Separator {
+			Transform {
+			    translation	1.82818 -0.215324 1.55691
+			    rotation	0 -1 0  0.0531816
+			    scaleFactor	0.739785 0.739786 0.739785
+			    center	-0.109751 -3.40566e-05 -4.25488
+			}
+			Material {
+			    diffuseColor	0.4 0.4 1
+			    specularColor 1 1 1
+      			    shininess  1.0
+   			    ambientColor 0.2 0.2 0.2
+			}
+			Sphere {
+			}
+		    }
+		}
+	    }
+	    Separator {
+		
+		Transform {
+		    translation	4.01825 -2.1791 -0.146265
+		    rotation	-1 0 0  0.381973
+		    scaleFactor	0.999021 0.99902 0.999021
+		    center	1.55159 0.0125609 0.445302
+		}
+		Separator {
+		    Separator {
+			Transform {
+			    translation	1.87267 0.278763 1.55928
+			    rotation	0 -1 0  0.0531816
+			    scaleFactor	0.739785 0.739786 0.739785
+			    center	-0.109751 -3.40566e-05 -4.25488
+			}
+			Material {
+			    diffuseColor	0.3 0.3 1
+			    specularColor 1 1 1
+      			    shininess  0.9
+   			    ambientColor 0.2 0.2 0.2
+			}
+			Sphere {
+			}
+		    }
+		}
+	    }
+	    Separator {
+		
+		Transform {
+		    translation	3.695 -1.18664 -0.544938
+		    rotation	-1 0 0  0.381973
+		    scaleFactor	0.999021 0.99902 0.999021
+		    center	1.55159 0.0125609 0.445302
+		}
+		Separator {
+		    Separator {
+			Transform {
+			    translation	1.44653 0.43727 1.5366
+			    rotation	0 -1 0  0.0531816
+			    scaleFactor	0.739785 0.739786 0.739785
+			    center	-0.109751 -3.40566e-05 -4.25488
+			}
+			Material {
+			    diffuseColor	0.4 0.4 1
+			    specularColor 1 1 1
+      			    shininess  0.8
+   			    ambientColor 0.2 0.2 0.2
+			}
+			Sphere {
+			}
+		    }
+		}
+	    }
+	    Separator {
+		
+		Transform {
+		    translation	4.55224 -1.0306 -0.607618
+		    rotation	-1 0 0  0.381973
+		    scaleFactor	0.999021 0.99902 0.999021
+		    center	1.55159 0.0125609 0.445302
+		}
+		Separator {
+		    Separator {
+			Transform {
+			    translation	2.05423 0.207944 1.56894
+			    rotation	0 -1 0  0.0531816
+			    scaleFactor	0.739785 0.739786 0.739785
+			    center	-0.109751 -3.40566e-05 -4.25488
+			}
+			Material {
+			    diffuseColor	0.3 0.3 1
+			    specularColor 1 1 1
+      			    shininess  0.7
+   			    ambientColor 0.2 0.2 0.2
+			}
+			Sphere {
+			}
+		    }
+		}
+	    }
+	}
+	Separator {
+	    Transform {
+		translation	0 -0.823887 -1.5034
+		center	5.6948 -1.91729 0.206084
+	    }
+	    Separator {
+		
+		Transform {
+		    translation	4.01825 -2.1791 -0.146265
+		    rotation	-1 0 0  0.381972
+		    scaleFactor	0.999021 0.99902 0.999021
+		    center	1.55159 0.0125609 0.445302
+		}
+		Separator {
+		    Separator {
+			Transform {
+			    translation	1.42535 0.131841 2.25262
+			    rotation	0 -1 0  0.0531816
+			    scaleFactor	0.739785 0.739786 0.739785
+			    center	-0.109751 -3.40566e-05 -4.25488
+			}
+			Material {
+			    diffuseColor	0.2 0.2 1
+			    specularColor 1 1 1
+      			    shininess  0.7
+   			    ambientColor 0.2 0.2 0.2
+			}
+			Sphere {
+			}
+		    }
+		}
+	    }
+	}
+	Separator {
+	    Transform {
+		translation	0 1.40594 -2.30445
+		center	5.6948 -1.91729 0.206084
+	    }
+	    Separator {
+		
+		Transform {
+		    translation	4.01825 -2.1791 -0.146265
+		    rotation	-1 0 0  0.381972
+		    scaleFactor	0.999021 0.99902 0.999021
+		    center	1.55159 0.0125609 0.445302
+		}
+		Separator {
+		    Separator {
+			Transform {
+			    translation	1.93293 -0.966506 2.13505
+			    rotation	0 -1 0  0.0531816
+			    scaleFactor	0.739785 0.739786 0.739785
+			    center	-0.109751 -3.40566e-05 -4.25488
+			}
+			Material {
+			    diffuseColor	0.2 0.2 1
+			    specularColor 1 1 1
+      			    shininess  0.6
+   			    ambientColor 0.2 0.2 0.2
+			}
+			Sphere {
+			}
+		    }
+		}
+	    }
+	}
+	Separator {
+	    Transform {
+		translation	0 3.60541 -1.73212
+		center	5.6948 -1.91729 0.206084
+	    }
+	    Separator {
+		
+		Transform {
+		    translation	4.01825 -2.1791 -0.146265
+		    rotation	-1 0 0  0.381972
+		    scaleFactor	0.999021 0.99902 0.999021
+		    center	1.55159 0.0125609 0.445302
+		}
+		Separator {
+		    Separator {
+			Transform {
+			    translation	0.526539 -2.94977 0.796006
+			    rotation	0 -1 0  0.0531816
+			    scaleFactor	0.739785 0.739786 0.739785
+			    center	-0.109751 -3.40566e-05 -4.25488
+			}
+			Material {
+			    diffuseColor	0.1 0.1 1
+			    specularColor 1 1 1
+      			    shininess  0.9
+   			    ambientColor 0.2 0.2 0.2
+			}
+			Sphere {
+			}
+		    }
+		}
+	    }
+	}
+    }
+    Separator {
+	Transform {
+	    translation	0 -0.00901771 -2.11156
+	    center	5.24792 -2.61919 -0.599861
+	}
+	Separator {
+	    Transform {
+		translation	0 -0.823887 -1.5034
+		center	5.6948 -1.91729 0.206084
+	    }
+	    Separator {
+		
+		Transform {
+		    translation	4.01825 -2.1791 -0.146265
+		    rotation	-1 0 0  0.381972
+		    scaleFactor	0.999021 0.99902 0.999021
+		    center	1.55159 0.0125609 0.445302
+		}
+		Separator {
+		    Separator {
+			Transform {
+			    translation	1.31395 0.124452 3.18823
+			    rotation	0 -1 0  0.0531816
+			    scaleFactor	0.739785 0.739786 0.739785
+			    center	-0.109751 -3.40566e-05 -4.25488
+			}
+			Material {
+			    diffuseColor	0 0 1
+			    specularColor 1 1 1
+      			    shininess  0.7
+   			    ambientColor 0.2 0.2 0.2
+			}
+			Sphere {
+			}
+		    }
+		}
+	    }
+	}
+    }
+}

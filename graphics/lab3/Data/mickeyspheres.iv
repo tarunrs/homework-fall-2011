@@ -1,0 +1,79 @@
+#Inventor V2.1 ascii
+
+
+PerspectiveCamera {
+    viewportMapping	ADJUST_CAMERA
+    position	0.901937 -1.64458 6.69716
+    orientation	-0.116523 0.168104 -0.978858  4.74109
+    aspectRatio	1
+    nearDistance	5.02772
+    farDistance	8.27236
+    focalDistance	6.64843
+    heightAngle	0.785398
+}
+Separator {
+    LightModel {
+	model	BASE_COLOR
+    }
+    PointLight {
+                on TRUE
+                intensity 1
+                color 1 1 1
+                location -9.20548      -9.29591        -1.3214
+        }
+
+    Separator {
+	Separator {
+	    Transform {
+		translation	0.821932 0.985496 0.493933
+		rotation	1 0 0  2.03541
+		scaleFactor	0.5 0.5 0.5
+	    }
+	    Material {
+		diffuseColor	.25 0 .7
+	 	specularColor	0.7 0.7 0.7
+		shininess	0.5
+	}
+	    Sphere {
+	    }
+	}
+	Separator {
+	    Transform {
+		translation	1.53533 0.0300682 -4.84923e-09
+		rotation	1 0 0  0.634962
+	    }
+	    Material {
+		diffuseColor	.25 0 1
+	 	specularColor	0.7 0.7 0.7
+		shininess	0.5
+	    }
+	    Sphere {
+	    }
+	}
+    }
+}
+Separator {
+    LightModel {
+	model	BASE_COLOR
+    }
+    Transform {
+	translation	-0.375725 -1.52559 5.96046e-08
+	center	0.905499 0.945771 0.474023
+    }
+    Separator {
+	Separator {
+	    Transform {
+		translation	0.905499 0.945771 0.474023
+		rotation	1 0 0  2.03541
+		scaleFactor	0.5 0.5 0.5
+	    }
+	    Material {
+		diffuseColor	.25 0 .7
+	 	specularColor	0.7 0.7 0.7
+		shininess	0.5
+	    }
+	    Sphere {
+	    }
+	}
+    }
+}

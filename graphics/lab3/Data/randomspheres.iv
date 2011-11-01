@@ -1,0 +1,197 @@
+#Inventor V2.1 ascii
+
+PerspectiveCamera {
+    viewportMapping	ADJUST_CAMERA
+    position	1.44425 4.07778 -12.4253
+    orientation	0.245059 0.957922 0.149438  3.15072
+    aspectRatio	1
+    nearDistance	8.40001
+    farDistance	16.9814
+    focalDistance	12.6864
+    heightAngle	0.785398
+}
+Separator {
+    LightModel {
+	model	BASE_COLOR
+    }
+
+    PointLight {
+                on TRUE
+                intensity 1
+                color 1 1 1
+                location 14.6288    6.30624    -5.62809
+        }
+
+    Separator {
+	Separator {
+	    Transform {
+		translation	2.73418 1.37814 0.0686875
+	    }
+	    Material {
+		diffuseColor	.2 .2 .6
+		specularColor	0.7 0.7 0.7
+		shininess	0.5
+	    }
+	    Sphere {
+	    }
+	}
+	Separator {
+	    Transform {
+		translation	1.06196 2.80189 0
+		scaleFactor .3 .3 .3
+	    }
+	    Material {
+		diffuseColor	.5 .8 .1
+		specularColor	0.7 0.7 0.7
+		shininess	0.5
+	    }
+	    Sphere {
+	    }
+	}
+    }
+}
+Separator {
+    LightModel {
+	model	BASE_COLOR
+    }
+    Transform {
+	translation	0.919502 -3.82701 0
+	center	1.06196 2.80189 0
+    }
+    Separator {
+	Separator {
+	    Transform {
+		translation	1.06196 2.80189 0
+		scaleFactor .7 .7 .7
+	    }
+	    Material {
+		diffuseColor	.9 .8 .3
+		specularColor	0.7 0.7 0.7
+		shininess	0.5
+	    }
+	    Sphere {
+	    }
+	}
+    }
+}
+Separator {
+    LightModel {
+	model	BASE_COLOR
+    }
+    Transform {
+	translation	-3.34676 -2.18042 0
+	center	1.06196 2.80189 0
+    }
+    Separator {
+	Separator {
+	    Transform {
+		translation	1.06196 2.80189 0
+		scaleFactor .8 .8 .8
+	    }
+	    Material {
+		diffuseColor	.2 .4 .7
+		specularColor	0.7 0.7 0.7
+		shininess	0.5
+	    }
+	    Sphere {
+	    }
+	}
+    }
+}
+Separator {
+    LightModel {
+	model	BASE_COLOR
+    }
+    Transform {
+	translation	-0.885415 -2.14154 0
+	center	1.06196 2.80189 0
+    }
+    Separator {
+	Separator {
+	    Transform {
+		translation	1.06196 2.80189 0
+		scaleFactor .7 .7 .7
+	    }
+	    Material {
+		diffuseColor	.8 .2 .7
+		specularColor	0.7 0.7 0.7
+		shininess	0.5
+	    }
+	    Sphere {
+	    }
+	}
+    }
+}
+Separator {
+    LightModel {
+	model	BASE_COLOR
+    }
+    Transform {
+	translation	-1.28806 -4.59745 1.19209e-07
+	center	1.06196 2.80189 0
+    }
+    Separator {
+	Separator {
+	    Transform {
+		translation	1.06196 2.80189 0
+		scaleFactor .4 .4 .4
+	    }
+	    Material {
+		diffuseColor	.1 .1 .7
+		specularColor	0.7 0.7 0.7
+		shininess	0.5
+	    }
+	    Sphere {
+	    }
+	}
+    }
+}
+Separator {
+    LightModel {
+	model	BASE_COLOR
+    }
+    Transform {
+	translation	2.27166 -2.87523 0
+	center	1.06196 2.80189 0
+    }
+    Separator {
+	Separator {
+	    Transform {
+		translation	1.06196 2.80189 0
+		scaleFactor .8 .8 .8
+	    }
+	    Material {
+		diffuseColor	.3 .9 .2
+		specularColor	0.7 0.7 0.7
+		shininess	0.5
+	    }
+	    Sphere {
+	    }
+	}
+    }
+}
+Separator {
+    LightModel {
+	model	BASE_COLOR
+    }
+    Transform {
+	translation	-1.56633 -0.632445 0
+	rotation	-1 0 0  0.311855
+	scaleFactor      1 1 1
+	center	1.06196 2.80189 0
+    }
+    Separator {
+	Separator {
+	    Transform {
+		translation	1.06196 2.80189 0
+	    }
+	    Material {
+		diffuseColor	0 0 1
+		specularColor	0.7 0.7 0.7
+		shininess	0.5
+	    }
+	    Sphere {
+	    }
+	}
+    }
+}

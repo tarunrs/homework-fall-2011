@@ -1,0 +1,23 @@
+The Raytracer has been compiled and tested in stdsun.
+
+To compile the program, run:
+
+make
+
+To clear the object files and the executable, run:
+
+make clean
+
+To run the raytracer run:
+
+./rt <input-file.iv> <output-file.ppm> <xresolution> <yresolution> <shadow_on> <reflection_on>
+
+
+Example:
+
+./rt Data/sphere1.iv sphere1.ppm 512 512 0 0
+Will generate the output to sphere1.ppm with both shadows and reflection turned off.
+
+./rt Data/sphere1.iv sphere1.ppm 512 512 0 1
+Will generate the output to sphere1.ppm with shadows turn off and reflection turned on.
+
