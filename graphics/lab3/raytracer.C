@@ -113,33 +113,23 @@ bool RayTracer::refract(SbVec3f *ray_direction, SbVec3f *normal_at_intersection,
     N = *normal_at_intersection;
     d = *ray_direction;
     V = -1 * d;
-    //d = -1 *(*ray_direction);
     d.normalize();
     N.normalize();
     V.normalize();
     refractive_index = 1.0 / RI;
 
     if (N.dot(d) >= 0 ){
-        //std::cout<<"Going Out of medium : "<< N.dot(d)<<std::endl;
-        std::cout<<"out";
+        //std::cout<<"out";
         N = -1 * N;
         N.normalize();
         refractive_index = RI / 1.0 ;
     }
-    else{
-        std::cout<<"in";
-        //std::cout<<"Inside medium : "<< N.dot(d)<<std::endl;
-    }
 
     under_sqrt = should_transmit(&d, &N, refractive_index);
-    //std::cout<< under_sqrt<<std::endl;
     if(under_sqrt > 0){
         *T = (((refractive_index * N.dot(V)) - sqrt(under_sqrt))* N ) - (refractive_index * V);
-        //*T =   ((refractive_index * (N.dot((-1 * d)) - sqrt(under_sqrt)))* (N)) - (refractive_index * (-1 * d));
-        //std::cout<<"SQRT POS"<<std::endl;
         return true;
     }
-   // std::cout<<"SQRT neg"<<std::endl;
     return false;
 }
 
@@ -152,7 +142,6 @@ float RayTracer::should_transmit(SbVec3f *ray_direction, SbVec3f *normal_at_inte
     V = -1 * *ray_direction;
     N = *normal_at_intersection;
     ri = refractive_index;
-    //ret = 1- (refractive_index*refractive_index*(1-(normal_at_intersection->dot(-1 *(*ray_direction))*(normal_at_intersection->dot(-1 * (*ray_direction))))));
     ret = 1- ((ri*ri)*(1-( N.dot(V) * N.dot(V) )));
     if (ret < 0) ret = -1;
     return ret;
@@ -229,11 +218,8 @@ bool RayTracer::shade(SbVec3f *ray_origin, SbVec3f *ray_direction, SbVec3f *retC
                 //reflect the ray and add the color returned dude to the result of reflection
                 if(reflection_on && recursionDepth < 5){
                         if(temp.isShiny){
-                            //std::cout <<"shiny";
                             // compute replection of the ray, R1
                             SbVec3f R1;
-                            //R1 = (-2 *(normal_at_intersection.dot(*ray_direction)* normal_at_intersection)) + *ray_direction;
-                            //R1.normalize();
                             R1 = reflect(&normal_at_intersection, ray_direction);
                             SbVec3f poi;
                             poi = point_of_intersection + (0.01* R1);
@@ -241,19 +227,13 @@ bool RayTracer::shade(SbVec3f *ray_origin, SbVec3f *ray_direction, SbVec3f *retC
                             color = color + (temp.shininess * refColor);
                         }
                         if(temp.isTransparent){
-                            //std::cout<< "SPhere : " << k<<std::endl;
-                            //std::cout << temp.transparency;
                             SbVec3f T;
                             if(refract(ray_direction, &normal_at_intersection, &T)){
-                                //T = -1 * T;
                                 T.normalize();
                                 SbVec3f poi;
                                 poi = point_of_intersection + (0.01* T);
                                 shade(&poi, &T, &refracColor, recursionDepth+1,1);
-                                //std::cout<<std::endl;
-                                //print_vector(refracColor);
                                 color = color + (temp.transparency * refracColor);
-                                //print_vector(color);
                             }
 
                         }

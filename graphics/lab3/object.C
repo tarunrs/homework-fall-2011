@@ -56,29 +56,12 @@ bool Object::intersection(SbVec3f *starting_position, SbVec3f *ray_direction, fl
     SbVec3f sp = *starting_position;
     SbVec3f origin(0.0,0.0,0.0);
 
-
-    //iM.multVecMatrix(b,b);
- //   print_vector(rd);
-  //  std::cout<<"after"<<std::endl;
     rd = multiply_with_inverse(rd);
     origin = multiply_with_inverse(origin);
     rd = rd - origin;
-  //  print_vector(rd);
-   // std::cout<<"after 2"<<std::endl;
     rd.normalize();
-   // print_vector(rd);
-    //std::cout<<"a"<<std::endl;
-    //iM.multVecMatrix(a,a);
     sp = multiply_with_inverse(sp);
 
-    /*xd = (*ray_direction)[0];
-    yd = (*ray_direction)[1];
-    zd = (*ray_direction)[2];
-
-    xr = (*starting_position)[0];
-    yr = (*starting_position)[1];
-    zr = (*starting_position)[2];
-    */
     xd = rd[0];
     yd = rd[1];
     zd = rd[2];
@@ -100,13 +83,12 @@ bool Object::intersection(SbVec3f *starting_position, SbVec3f *ray_direction, fl
 
     d = calculate_determinant(a,b,c);
 
-    //std::cout<< m_K<<std::endl;
     if(d == -1)
         return false;
-    //std::cout<<d<<std::endl;
     float sol = calculate_solution(d, b, a);
-    //std::cout << " " << sol;
+
     *T = sol;
+
     if(sol == -1)
         return false;
     else
