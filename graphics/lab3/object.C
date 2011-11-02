@@ -47,17 +47,40 @@ Object::Object(float p_A, float  p_B, float p_C){
     m_C = p_C;
 }
 */
-bool Object::intersection(SbVec3f *starting_position, SbVec3f *ray_direction, float * T){
+bool Object::intersection1(SbVec3f *starting_position, SbVec3f *ray_direction, float * T){
     float a, b, c, d;
     float xd, yd, zd;
     float xr, yr, zr;
-    xd = (*ray_direction)[0];
+    SbVec3f rd = *ray_direction;
+    SbVec3f sp = *starting_position;
+
+    //iM.multVecMatrix(b,b);
+ //   print_vector(rd);
+  //  std::cout<<"after"<<std::endl;
+    rd = multiply_with_inverse(rd);
+  //  print_vector(rd);
+   // std::cout<<"after 2"<<std::endl;
+    rd.normalize();
+   // print_vector(rd);
+    //std::cout<<"a"<<std::endl;
+    //iM.multVecMatrix(a,a);
+    sp = multiply_with_inverse(sp);
+
+    /*xd = (*ray_direction)[0];
     yd = (*ray_direction)[1];
     zd = (*ray_direction)[2];
 
     xr = (*starting_position)[0];
     yr = (*starting_position)[1];
     zr = (*starting_position)[2];
+    */
+    xd = rd[0];
+    yd = rd[1];
+    zd = rd[2];
+
+    xr = sp[0];
+    yr = sp[1];
+    zr = sp[2];
 
     a = (m_A * pow(xd, 2)) + (m_B * pow(yd, 2)) + (m_C * pow(zd, 2))
         + (m_D* xd * yd) + (m_E * xd * zd) + (m_F * yd * zd);
@@ -85,6 +108,18 @@ bool Object::intersection(SbVec3f *starting_position, SbVec3f *ray_direction, fl
         return true;
 
 
+}
+
+SbVec3f Object::multiply_with_inverse(SbVec3f pt){
+    SbVec3f des;
+    iM.multVecMatrix(pt, des);
+    return des;
+}
+
+SbVec3f Object::multiply_with_transformation(SbVec3f pt){
+    SbVec3f des;
+    M.multVecMatrix(pt, des);
+    return des;
 }
 
 float Object::calculate_determinant(float a, float b, float c){

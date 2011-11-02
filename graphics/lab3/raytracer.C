@@ -168,6 +168,7 @@ SbVec3f RayTracer::reflect(SbVec3f *normal_at_intersection, SbVec3f *ray_directi
 bool RayTracer::shade(SbVec3f *ray_origin, SbVec3f *ray_direction, SbVec3f *retColor, int recursionDepth, int flag){
 	float t_value, t_min = 999;
 	SbVec3f normal_at_intersection;
+	SbVec3f normal_at_intersection1;
 	bool should_color = false;
     SbVec3f color;
     color[0] = 0.0;
@@ -226,7 +227,7 @@ bool RayTracer::shade(SbVec3f *ray_origin, SbVec3f *ray_direction, SbVec3f *retC
                 //reflect the ray and add the color returned dude to the result of reflection
                 if(reflection_on && recursionDepth < 5){
                         if(temp.isShiny){
-                            std::cout <<"shiny";
+                            //std::cout <<"shiny";
                             // compute replection of the ray, R1
                             SbVec3f R1;
                             //R1 = (-2 *(normal_at_intersection.dot(*ray_direction)* normal_at_intersection)) + *ray_direction;

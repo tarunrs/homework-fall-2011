@@ -20,7 +20,7 @@ Sphere::Sphere ( OSUObjectData * obj) {
 	if(transparency > 0) isTransparent = true;
 	SoTransform * transformation = obj->transformation;
 	transform(transformation);
-	//position.setValue(0.0,0.0,0.0);
+	//position.setValue(0.0,0.0,0.0); //ntc
 	this->setCoefficients(1,1,1,0,0,0,0,0,0,-1);
 }
 
@@ -57,11 +57,21 @@ void Sphere::transform(SoTransform *transformation){
     F = S * R *T;
 	SbVec3f pos(0,0,0);
 	F.multVecMatrix(pos, pos);
+	M = F;
+	if(M.det4() != 0 ){
+	    FILE *fp = fopen("testfile", "a");
+	    std::cout << "Storing inverse"<< M.det4() << std::endl;
+	    M.print(fp);
+        iM = F.inverse();
+        iM.print(fp);
+        fclose(fp);
+        //std::cout<< iM;
+    }
 	position = pos;
     print_vector(position);
 }
 
-bool Sphere::intersection (SbVec3f *starting_position, SbVec3f *ray_direction, float* T){
+bool Sphere::intersection(SbVec3f *starting_position, SbVec3f *ray_direction, float* T){
 	double a, b, c,d;
 	SbVec3f emc ;
 	emc = (*starting_position - this->position);
@@ -86,11 +96,32 @@ bool Sphere::intersection (SbVec3f *starting_position, SbVec3f *ray_direction, f
 
 SbVec3f Sphere::point_of_intersection (SbVec3f *starting_position, SbVec3f *ray_direction, float T){
 	double a, b, c,d;
-	SbVec3f sme ;
+	SbVec3f sp = *starting_position ;
+	SbVec3f rd = *ray_direction;
 	SbVec3f poi;
-	poi= *starting_position + (T * (*ray_direction));
+
+	//sp = multiply_with_inverse(sp);
+	//rd = multiply_with_inverse(rd);
+	//rd.normalize();
+	poi= sp + (T * (rd));
+	//poi = this->multiply_with_transformation(poi); //ntc
 	return poi;
 }
+
+SbVec3f Sphere::point_of_intersection1(SbVec3f *starting_position, SbVec3f *ray_direction, float T){
+	double a, b, c,d;
+	SbVec3f sp = *starting_position ;
+	SbVec3f rd = *ray_direction;
+	SbVec3f poi;
+
+	sp = multiply_with_inverse(sp);
+	rd = multiply_with_inverse(rd);
+	rd.normalize();
+	poi= sp + (T * (rd));
+	poi = this->multiply_with_transformation(poi); //ntc
+	return poi;
+}
+
 
 
 double Sphere::calculate_determinant(double a, double b, double c){
@@ -116,12 +147,31 @@ double Sphere::calculate_solution(double d, double b, double a){
 
 }
 
-SbVec3f Sphere::calculate_normal(SbVec3f *starting_position, SbVec3f *ray_direction, float t){
+SbVec3f Sphere::calculate_normal1(SbVec3f *starting_position, SbVec3f *ray_direction, float t){
     SbVec3f normal;
+    SbVec3f sp = *starting_position ;
+	SbVec3f rd = *ray_direction;
+	sp = multiply_with_inverse(sp);
+	rd = multiply_with_inverse(rd);
+	rd.normalize();
+    normal = (sp+ (t *(rd)));// - position; //ntc
+    normal = multiply_with_transformation(normal);
     normal = (*starting_position + (t *(*ray_direction))) - position;
     return normal;
 }
 
+SbVec3f Sphere::calculate_normal(SbVec3f *starting_position, SbVec3f *ray_direction, float t){
+    SbVec3f normal;
+    //SbVec3f sp = *starting_position ;
+	//SbVec3f rd = *ray_direction;
+	//sp = multiply_with_inverse(sp);
+	//rd = multiply_with_inverse(rd);
+	//rd.normalize();
+    //normal = (sp+ (t *(rd)));// - position; //ntc
+    //normal = multiply_with_transformation(normal);
+    normal = (*starting_position + (t *(*ray_direction))) - position;
+    return normal;
+}
 //SbVec3f Sphere::calculate_point_of_intersection(SbVec3f *starting_position, SbVec3f *ray_direction, float t){
   //  SbVec3f normal;
    // normal = (*starting_position + (t *(*ray_direction))) - position;
