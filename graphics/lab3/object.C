@@ -11,6 +11,7 @@ Object::Object(){
     m_H = 0.0;
     m_I = 0.0;
     m_J = 0.0;
+    m_K = 1.0;
 }
 Object::Object(float p_A, float  p_B, float p_C, float p_D, float p_E, float p_F, float p_G, float p_H, float p_I, float p_J){
     m_A = p_A;
@@ -70,10 +71,14 @@ bool Object::intersection(SbVec3f *starting_position, SbVec3f *ray_direction, fl
         + (m_G * xr) + (m_H * yr) + (m_I * zr) + m_J ;
 
     d = calculate_determinant(a,b,c);
+
+    //std::cout<< m_K<<std::endl;
     if(d == -1)
         return false;
-
+    //std::cout<<d<<std::endl;
     float sol = calculate_solution(d, b, a);
+    //std::cout << " " << sol;
+    *T = sol;
     if(sol == -1)
         return false;
     else

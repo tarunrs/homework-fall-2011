@@ -3,24 +3,25 @@
 Sphere::Sphere(){
 	position.setValue(0.0,0.0,0.0);
 	radius = 1;
-	this->setCoefficients(1,1,1,0,0,0,0,0,0,1);
+	this->setCoefficients(1,1,1,0,0,0,0,0,0,-1);
 }
 Sphere::Sphere ( OSUObjectData * obj) {
     isShiny = false;
     isTransparent = false;
 	SoSphere * sph = (SoSphere *)obj->shape;
 	radius = sph->radius.getValue();
+	//radius = 1; //ntc
 	material = obj->material;
     const float* s = obj->material->shininess.getValues(0);
     shininess = s[0];
     const float* t = obj->material->transparency.getValues(0);
     transparency = t[0];
-    //if(transparency > 0) std::cout<<"is transperant";
-	//shininess = obj->material->shininess.getNum();
 	if(shininess > 0) isShiny = true;
 	if(transparency > 0) isTransparent = true;
 	SoTransform * transformation = obj->transformation;
 	transform(transformation);
+	//position.setValue(0.0,0.0,0.0);
+	this->setCoefficients(1,1,1,0,0,0,0,0,0,-1);
 }
 
 void Sphere::print_details(){
@@ -68,10 +69,14 @@ bool Sphere::intersection (SbVec3f *starting_position, SbVec3f *ray_direction, f
 	b = (2 * (*ray_direction)).dot(emc);
 	c = emc.dot(emc) - (this->radius * this->radius);
 	d = calculate_determinant(a, b, c);
+
 	if(d == -1)
 		return false;
+
 	else{
+	    //std::cout<<" "<<d;
 	    *T = calculate_solution(d,b,a);
+	    //std::cout << " " <<*T<< std::endl;
 	    if(*T != -1)
 		  return true;
         else

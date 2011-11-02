@@ -10,3 +10,5 @@
 #include <vector>
 #include "OSUInventor.h"
 #define PI 3.14159265
+
+void print_vector(SbVec3f vec);

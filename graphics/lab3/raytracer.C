@@ -175,18 +175,10 @@ bool RayTracer::shade(SbVec3f *ray_origin, SbVec3f *ray_direction, SbVec3f *retC
     color[2] = 0.0;
     for(int k =0; k<spheres.size(); k++){
         Sphere temp = spheres.at(k);
-        //if(flag == 1){
-         //   std::cout<< temp.intersection(ray_origin, ray_direction, &t_value);
-          //  std::cout<< t_value<< " " << recursionDepth<<std::endl;
-        //}
+
         if(temp.intersection(ray_origin, ray_direction, &t_value))
         {
             if(t_value < t_min && t_value > 0 && t_value !=999) {
-     /*   if(flag == 1){
-            std::cout<< temp.intersection(ray_origin, ray_direction, &t_value);
-            std::cout<< " "<<t_value<< " " << recursionDepth<<std::endl;
-        }
-*/
                 t_min = t_value;
                 SbVec3f V = -(*ray_direction); //view vector
 
@@ -234,6 +226,7 @@ bool RayTracer::shade(SbVec3f *ray_origin, SbVec3f *ray_direction, SbVec3f *retC
                 //reflect the ray and add the color returned dude to the result of reflection
                 if(reflection_on && recursionDepth < 5){
                         if(temp.isShiny){
+                            std::cout <<"shiny";
                             // compute replection of the ray, R1
                             SbVec3f R1;
                             //R1 = (-2 *(normal_at_intersection.dot(*ray_direction)* normal_at_intersection)) + *ray_direction;
@@ -242,7 +235,7 @@ bool RayTracer::shade(SbVec3f *ray_origin, SbVec3f *ray_direction, SbVec3f *retC
                             SbVec3f poi;
                             poi = point_of_intersection + (0.01* R1);
                             shade(&poi, &R1, &refColor, recursionDepth+1);
-                            //color = color + (temp.shininess * refColor);
+                            color = color + (temp.shininess * refColor);
                         }
                         if(temp.isTransparent){
                             //std::cout<< "SPhere : " << k<<std::endl;

@@ -13,7 +13,7 @@ INCLUDES = $(COIN_INCLUDE)
 
 LIBRARIES =  $(COIN_LIBRARIES) -lCoin 
 
-OBJECT_FILES = OSUInventor.o main.o sphere.o raytracer.o camera.o light.o object.o cone.o
+OBJECT_FILES = OSUInventor.o main.o sphere.o raytracer.o camera.o light.o object.o cone.o common.o
 EXEC = rt
 
 .C.o:
