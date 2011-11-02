@@ -121,11 +121,13 @@ bool RayTracer::refract(SbVec3f *ray_direction, SbVec3f *normal_at_intersection,
 
     if (N.dot(d) >= 0 ){
         //std::cout<<"Going Out of medium : "<< N.dot(d)<<std::endl;
+        std::cout<<"out";
         N = -1 * N;
         N.normalize();
         refractive_index = 1/refractive_index;
     }
     else{
+        std::cout<<"in";
         //std::cout<<"Inside medium : "<< N.dot(d)<<std::endl;
     }
 

@@ -13,6 +13,7 @@ Object::Object(){
     m_J = 0.0;
     m_K = 1.0;
 }
+
 Object::Object(float p_A, float  p_B, float p_C, float p_D, float p_E, float p_F, float p_G, float p_H, float p_I, float p_J){
     m_A = p_A;
     m_B = p_B;
@@ -47,17 +48,21 @@ Object::Object(float p_A, float  p_B, float p_C){
     m_C = p_C;
 }
 */
-bool Object::intersection1(SbVec3f *starting_position, SbVec3f *ray_direction, float * T){
+bool Object::intersection(SbVec3f *starting_position, SbVec3f *ray_direction, float * T){
     float a, b, c, d;
     float xd, yd, zd;
     float xr, yr, zr;
     SbVec3f rd = *ray_direction;
     SbVec3f sp = *starting_position;
+    SbVec3f origin(0.0,0.0,0.0);
+
 
     //iM.multVecMatrix(b,b);
  //   print_vector(rd);
   //  std::cout<<"after"<<std::endl;
     rd = multiply_with_inverse(rd);
+    origin = multiply_with_inverse(origin);
+    rd = rd - origin;
   //  print_vector(rd);
    // std::cout<<"after 2"<<std::endl;
     rd.normalize();
@@ -106,8 +111,6 @@ bool Object::intersection1(SbVec3f *starting_position, SbVec3f *ray_direction, f
         return false;
     else
         return true;
-
-
 }
 
 SbVec3f Object::multiply_with_inverse(SbVec3f pt){
