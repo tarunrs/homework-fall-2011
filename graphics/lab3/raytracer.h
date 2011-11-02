@@ -1,5 +1,5 @@
 #include "common.h"
-#include "sphere.h"
+#include "shapes.h"
 #include "light.h"
 #include "camera.h"
 
@@ -19,6 +19,7 @@ class RayTracer{
 	OSUInventorScene *scene;
 	int shadow_on, reflection_on;
 	std::vector<Sphere> spheres;
+	//std::vector<Object> spheres;
 	std::vector<Light> lights;
 	std::string op_filename;
 	Camera * camera;

@@ -1,11 +1,5 @@
-//#include "common.h"
-//#include "sphere.h"
-//#include "camera.h"
-//#include "light.h"
 #include "raytracer.h"
 
-
-//using namespace std;
 int main(int argc, char *argv[])
 {
 	using namespace std;

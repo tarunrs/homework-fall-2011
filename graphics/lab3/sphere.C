@@ -1,4 +1,4 @@
-#include "sphere.h"
+#include "shapes.h"
 
 Sphere::Sphere(){
 	position.setValue(0.0,0.0,0.0);

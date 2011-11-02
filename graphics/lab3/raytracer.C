@@ -155,6 +155,60 @@ SbVec3f RayTracer::reflect(SbVec3f *normal_at_intersection, SbVec3f *ray_directi
     return R;
 }
 
+/*
+bool RayTracer::shade(SbVec3f *ray_origin, SbVec3f *ray_direction, SbVec3f *retColor, int recursionDepth, int flag){
+	float t_value, t_min = 999;
+	SbVec3f normal_at_intersection;
+	SbVec3f normal_at_intersection1;
+	bool should_color = false;
+    SbVec3f color;
+    color[0] = 0.0;
+    color[1] = 0.0;
+    color[2] = 0.0;
+    Cone *temp1= new Cone(-1,1,1);
+    Cone temp = *temp1;
+
+        if(temp.intersection(ray_origin, ray_direction, &t_value))
+        {
+            if(t_value < t_min && t_value > 0 && t_value !=999) {
+                color[0] = 0.1;
+                color[1] = 0.1;
+                color[2] = 0.1;
+                should_color = true;
+
+                SbVec3f V = -(*ray_direction); //view vector
+
+                V.normalize();
+                normal_at_intersection = temp.calculate_normal(ray_origin, ray_direction, t_value);
+                normal_at_intersection.normalize(); // N vector at the point of intersection
+                SbVec3f point_of_intersection = temp.point_of_intersection( ray_origin, ray_direction, t_value);
+
+                SbVec3f L = lights.at(0).position - point_of_intersection;
+                            L.normalize();
+                            SbVec3f R;
+                            R = (2 * normal_at_intersection.dot(L) * normal_at_intersection) - L;
+                            R.normalize();
+                            //SbVec3f H = (V + L);//is using half way vector
+                            //H.normalize();//is using half way vector
+                            //float cos_theta = H.dot(normal_at_intersection); //is using half way vector
+
+                            float NdotL = normal_at_intersection.dot(L);
+                            float cos_theta = V.dot(R);
+
+                            for(int i = 0; i <3; i++){
+                                if(NdotL > 0)
+                                    color[i] += ( NdotL * 0.1 * i );
+                                if(cos_theta > 0)
+                                    color[i] += ( pow(cos_theta, 20) * 0.1 * i);
+                            }
+
+            }
+        }
+
+    *retColor = color;
+    return should_color;
+}
+*/
 
 bool RayTracer::shade(SbVec3f *ray_origin, SbVec3f *ray_direction, SbVec3f *retColor, int recursionDepth, int flag){
 	float t_value, t_min = 999;
@@ -165,8 +219,13 @@ bool RayTracer::shade(SbVec3f *ray_origin, SbVec3f *ray_direction, SbVec3f *retC
     color[0] = 0.0;
     color[1] = 0.0;
     color[2] = 0.0;
+    //Cone *tempCone = new Cone();
+
     for(int k =0; k<spheres.size(); k++){
-        Sphere temp = spheres.at(k);
+        //Object temp1 ;
+        //temp1 = spheres.at(k);
+        Sphere temp;
+        temp = spheres.at(k);
 
         if(temp.intersection(ray_origin, ray_direction, &t_value))
         {
