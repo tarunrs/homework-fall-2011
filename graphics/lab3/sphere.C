@@ -157,13 +157,19 @@ SbVec3f Sphere::calculate_normal(SbVec3f *starting_position, SbVec3f *ray_direct
     SbVec3f sp = *starting_position ;
 	SbVec3f rd = *ray_direction;
 	SbVec3f origin(0.0,0.0,0.0);
+	//normal = (sp + (t *(rd))) - position;
+	//print_vector(normal); // 1
+	//normal = (sp + (t *(rd))) -  multiply_with_transformation(origin);
+	//print_vector(normal); // 2
 	sp = multiply_with_inverse(sp);
 	rd = multiply_with_inverse(rd);
+	origin = multiply_with_inverse(origin);
 	rd = rd - origin;
 	rd.normalize();
-    normal = (sp+ (t *(rd)));// - position; //ntc
-    normal = multiply_with_transformation(normal);
-    normal = (*starting_position + (t *(*ray_direction))) - position;
+
+    normal = (sp + (t *(rd))); //ntc
+    //print_vector(normal); //3
+    //normal = (*starting_position + (t *(*ray_direction))) - position; // -  multiply_with_transformation(origin);//
     return normal;
 }
 /*

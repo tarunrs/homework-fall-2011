@@ -106,7 +106,7 @@ bool RayTracer::shadow_ray_intersection(SbVec3f *point_of_intersection, int ligh
 }
 bool RayTracer::refract(SbVec3f *ray_direction, SbVec3f *normal_at_intersection, SbVec3f *T){
     float under_sqrt = 0;
-    float refractive_index = RI;
+    float refractive_index = 0;
 
     SbVec3f N, d, V;
 
@@ -117,14 +117,14 @@ bool RayTracer::refract(SbVec3f *ray_direction, SbVec3f *normal_at_intersection,
     d.normalize();
     N.normalize();
     V.normalize();
-    refractive_index = 1.0 / refractive_index;
+    refractive_index = 1.0 / RI;
 
     if (N.dot(d) >= 0 ){
         //std::cout<<"Going Out of medium : "<< N.dot(d)<<std::endl;
         std::cout<<"out";
         N = -1 * N;
         N.normalize();
-        refractive_index = 1/refractive_index;
+        refractive_index = RI / 1.0 ;
     }
     else{
         std::cout<<"in";
