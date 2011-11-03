@@ -44,7 +44,7 @@ Cube::Cube ( OSUObjectData * obj) {
 	z1.setValue (0.0, 0.0, 0.0);
 	z2.setValue (0.0, 0.0, depth);
 
-	tip_position.setValue(height, width, depth);
+	tip_position.setValue(width/2, height/2, depth/2);
 	print_vector(tip_position);
 	std::cout<<"tip position";
 	material = obj->material;
@@ -127,8 +127,8 @@ void Cube::transform(SoTransform *transformation){
 	S.setScale(scale_vector);
 //	F = T*R*S;
     F = S * R *T;
-	SbVec3f pos(0.0 ,0.0 ,0.0);
-	F.multVecMatrix(pos, pos);
+	SbVec3f pos(0.0-width/2,0.0 -height/2 ,0.0 - depth/2);
+	//F.multVecMatrix(pos, pos);
 	M = F; // save transformation matrix
 	if(M.det4() != 0 ){
 	    iM = F.inverse(); // store inverse if inverse exists
@@ -216,6 +216,7 @@ bool Cube::intersection(SbVec3f *starting_position, SbVec3f *ray_direction, floa
 	D.normalize();
 
     pos.setValue(0.0 ,0.0 ,0.0);
+    pos = position;
     //print_vector(tip_position);
     for(int i=0; i< 3; i++){
         if(D[i] == 0){
