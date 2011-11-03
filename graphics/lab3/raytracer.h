@@ -18,8 +18,8 @@ class RayTracer{
     FILE *fp;
 	OSUInventorScene *scene;
 	int shadow_on, reflection_on;
-	std::vector<Sphere> spheres;
-	//std::vector<Object> spheres;
+	//std::vector<Sphere> spheres;
+	std::vector<Object> objects;
 	std::vector<Light> lights;
 	std::string op_filename;
 	Camera * camera;
@@ -37,9 +37,10 @@ class RayTracer{
 	void calculate_eye_coordinate_system(Camera *cam);
 	void trace_rays();
 	bool shade(SbVec3f *ray_origin, SbVec3f *ray_direction, SbVec3f *color, int recursionDepth, int flag=0);
+	bool distribute_shade(int i, int j, SbVec3f *position, SbVec3f *color);
 	void print_vector(SbVec3f vec);
 	void calculate_image_dimentions();
-	SbVec3f  calculate_pixel_location(int i, int j);
+	SbVec3f  calculate_pixel_location(int i, int j, float du, float dv);
 	double calculate_determinant(double a, double b, double c);
 	double calculate_solution(double d, double b, double a);
 	void write_to_file(std::vector<std::vector<Pixel> > img);

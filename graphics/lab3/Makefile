@@ -9,11 +9,11 @@ CPP = g++
 INCLUDES = $(COIN_INCLUDE) 
 
 # Uncomment to turn on debugging:
-#CPPFLAGS = -g -DDEBUG
+CPPFLAGS = -g -DDEBUG
 
 LIBRARIES =  $(COIN_LIBRARIES) -lCoin 
 
-OBJECT_FILES = OSUInventor.o main.o sphere.o raytracer.o camera.o light.o object.o cone.o common.o
+OBJECT_FILES = OSUInventor.o main.o sphere.o raytracer.o camera.o light.o object.o cone.o common.o cube.o
 EXEC = rt
 
 .C.o:

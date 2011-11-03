@@ -2,6 +2,7 @@
 
 
 Cone::Cone(){
+    shapeType = 3;
     m_A = -1;
     m_B = 1;
     m_C = 1;
@@ -24,6 +25,7 @@ Cone::Cone(){
 
 
 Cone::Cone(float A, float B, float C){
+    shapeType = 3;
     m_A = A;
     m_B = B;
     m_C = C;

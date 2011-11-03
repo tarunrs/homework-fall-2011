@@ -16,8 +16,22 @@ class Sphere : public Object{
  public:
 	Sphere();
 	Sphere ( OSUObjectData * obj) ;
+	Sphere (const Object& b);
 	void transform(SoTransform *transformation);
 	void print_details();
+	SbVec3f calculate_normal(SbVec3f *starting_position, SbVec3f *ray_direction, float t);
+	SbVec3f point_of_intersection (SbVec3f *starting_position, SbVec3f *ray_direction, float T);
+};
+
+class Cube: public Object{
+    public:
+    Cube();
+    //Cube(float A, float B, float C);
+    Cube ( OSUObjectData * obj) ;
+    Cube (const Object& b);
+	void transform(SoTransform *transformation);
+	void print_details();
+	bool intersection(SbVec3f *starting_position, SbVec3f *ray_direction, float * T);
 	SbVec3f calculate_normal(SbVec3f *starting_position, SbVec3f *ray_direction, float t);
 	SbVec3f point_of_intersection (SbVec3f *starting_position, SbVec3f *ray_direction, float T);
 };
