@@ -125,5 +125,6 @@ SbVec3f Sphere::calculate_normal(SbVec3f *starting_position, SbVec3f *ray_direct
 	rd.normalize();
 
     normal = (sp + (t *(rd))); //ntc
+    //normal =multiply_with_transformation(normal);
     return normal;
 }

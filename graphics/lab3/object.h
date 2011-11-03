@@ -6,6 +6,7 @@ class Object  {
     int shapeType;
     float m_A, m_B, m_C, m_D, m_E, m_F, m_G, m_H, m_I, m_J, m_K;
     float m_dx, m_dy, m_dz;
+    int plane_of_intersection;
     SbMatrix M;
 	SbMatrix iM;
 	SbVec3f position;

@@ -159,7 +159,7 @@ SbVec3f Cube::point_of_intersection(SbVec3f *starting_position, SbVec3f *ray_dir
 // this function calculates the normal using the local coordinates;
 SbVec3f Cube::calculate_normal(SbVec3f *starting_position, SbVec3f *ray_direction, float t){
     SbVec3f normal;
-    SbVec3f sp = *starting_position ;
+    /*SbVec3f sp = *starting_position ;
 	SbVec3f rd = *ray_direction;
 	SbVec3f origin(0.0,0.0,0.0);
 
@@ -170,6 +170,31 @@ SbVec3f Cube::calculate_normal(SbVec3f *starting_position, SbVec3f *ray_directio
 	rd.normalize();
 
     normal = (sp + (t *(rd))); //ntc
+    return normal;*/
+
+    switch(plane_of_intersection){
+
+    case 0: normal.setValue(-1.0, 0.0, 0.0);
+            //normal =  -1 * u;
+            break;
+    case 1: normal.setValue(0.0, -1.0, 0.0);
+            //normal =  -1 * v;
+            break;
+    case 2: normal.setValue(0.0, 0.0, -1.0);
+            //normal =  -1 * n;
+            break;
+
+    case 3: normal.setValue(1.0, 0.0, 0.0);
+            //normal =  u;
+            break;
+    case 4: normal.setValue(0.0, 1.0, 0.0);
+            //normal =  v;
+            break;
+    case 5: normal.setValue(0.0, 0.0, 1.0);
+            //normal =  n;
+            break;
+
+    }
     return normal;
 }
 
@@ -202,9 +227,9 @@ bool Cube::intersection(SbVec3f *starting_position, SbVec3f *ray_direction, floa
             t1 = (pos[i] - p[i])/ D[i];
             t2 = (tip_position[i] - p[i])/ D[i];
       //      std::cout<<std::endl<<t1<< " "<<t2<<std::endl;
-            if(t1 > t2) swap(&t1, &t2);
+            if(t1 > t2) {plane_of_intersection = 3; swap(&t1, &t2);}
         //    std::cout<<t1<< " "<<t2<<std::endl;
-            if(t1 > tnear) tnear = t1;
+            if(t1 > tnear) { tnear = t1; plane_of_intersection += i;}
             if(t2 < tfar) tfar = t2;
             if (tnear > tfar) {
                 //print_vector(D);
