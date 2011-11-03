@@ -52,7 +52,7 @@ Cube::Cube ( OSUObjectData * obj) {
     shininess = s[0];
     const float* t = obj->material->transparency.getValues(0);
     transparency = t[0];
-	if(shininess > 0) isShiny = true;
+	if(shininess > 0) { std::cout<<"cube is shiny"<<std::endl;isShiny = true;}
 	if(transparency > 0) isTransparent = true;
 	SoTransform * transformation = obj->transformation;
 	transform(transformation);
@@ -174,16 +174,16 @@ SbVec3f Cube::calculate_normal(SbVec3f *starting_position, SbVec3f *ray_directio
 
     switch(plane_of_intersection){
 
-    case 0: normal.setValue(-1.0, 0.0, 0.0);
+    case 1: normal.setValue(1.0, 0.0, 0.0);
             //normal =  -1 * u;
             break;
-    case 1: normal.setValue(0.0, -1.0, 0.0);
+    case 0: normal.setValue(0.0, 1.0, 0.0);
             //normal =  -1 * v;
             break;
-    case 2: normal.setValue(0.0, 0.0, -1.0);
+    case 2: normal.setValue(0.0, 0.0, 1.0);
             //normal =  -1 * n;
             break;
-
+/*
     case 3: normal.setValue(1.0, 0.0, 0.0);
             //normal =  u;
             break;
@@ -193,7 +193,7 @@ SbVec3f Cube::calculate_normal(SbVec3f *starting_position, SbVec3f *ray_directio
     case 5: normal.setValue(0.0, 0.0, 1.0);
             //normal =  n;
             break;
-
+*/
     }
     return normal;
 }
@@ -215,7 +215,7 @@ bool Cube::intersection(SbVec3f *starting_position, SbVec3f *ray_direction, floa
 	D = D - origin;
 	D.normalize();
 
-    pos.setValue(0.0 ,0.0 ,0.0);
+    //pos.setValue(0.0 ,0.0 ,0.0);
     pos = position;
     //print_vector(tip_position);
     for(int i=0; i< 3; i++){
@@ -225,10 +225,12 @@ bool Cube::intersection(SbVec3f *starting_position, SbVec3f *ray_direction, floa
                 return false;
         }
         else{
+            plane_of_intersection = 0;
             t1 = (pos[i] - p[i])/ D[i];
             t2 = (tip_position[i] - p[i])/ D[i];
       //      std::cout<<std::endl<<t1<< " "<<t2<<std::endl;
-            if(t1 > t2) {plane_of_intersection = 3; swap(&t1, &t2);}
+            //if(t1 > t2) {plane_of_intersection = 3; swap(&t1, &t2);}
+            if(t1 > t2) {swap(&t1, &t2);}
         //    std::cout<<t1<< " "<<t2<<std::endl;
             if(t1 > tnear) { tnear = t1; plane_of_intersection += i;}
             if(t2 < tfar) tfar = t2;

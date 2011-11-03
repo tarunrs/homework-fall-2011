@@ -300,6 +300,7 @@ bool RayTracer::distribute_shade(int i, int j, SbVec3f *position, SbVec3f *color
     for(int k =0; k<2; k++){
         du = get_random_number();
         dv = get_random_number();
+        //pix_pos = calculate_pixel_location(i,j, du, dv);
         pix_pos = calculate_pixel_location(i,j, 0.5, 0.5);
         d_vec  = pix_pos - *position;
         d_vec.normalize();
