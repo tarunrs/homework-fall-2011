@@ -1,6 +1,6 @@
 #include "raytracer.h"
 
-RayTracer::RayTracer(std::string ip_filename, std::string opfilename, int xresolution, int yresolution,int s_on, int r_on, int depth_of_field_on){
+RayTracer::RayTracer(std::string ip_filename, std::string opfilename, int xresolution, int yresolution,int s_on, int r_on, int refract_on, int depth_of_field_on){
 	x_resolution = xresolution;
 	y_resolution = yresolution;
 	op_filename = opfilename;
@@ -10,6 +10,9 @@ RayTracer::RayTracer(std::string ip_filename, std::string opfilename, int xresol
 	reflection_on = r_on;
 	if(reflection_on )
         std::cout<<"Reflection On"<<std::endl;
+    refraction_on = refract_on;
+    if(refraction_on )
+        std::cout<<"Refraction On"<<std::endl;
     focal_length = depth_of_field_on;
 
 	read_open_inventor_scene(ip_filename);
@@ -200,6 +203,7 @@ bool RayTracer::shadow_ray_intersection(SbVec3f *point_of_intersection, SbVec3f 
         shapetype = objects.at(j).shapeType ;
         if(shapetype == 1){
             Sphere tempSphere = objects.at(j);
+            if(tempSphere.transparency > 0 && refraction_on) continue;
             intersects = tempSphere.intersection(point_of_intersection, ray_direction, &t_value);
             //intersects = tempSphere.intersection(&poi, &ray_direction, &t_value);
         }
@@ -269,6 +273,8 @@ SbVec3f RayTracer::reflect(SbVec3f *normal_at_intersection, SbVec3f *ray_directi
     return R;
 }
 
+
+/*
 bool RayTracer::shade(SbVec3f *ray_origin, SbVec3f *ray_direction, SbVec3f *retColor, int recursionDepth, int flag){
 	float t_value, t_min = 999;
 	SbVec3f normal_at_intersection;
@@ -299,7 +305,7 @@ bool RayTracer::shade(SbVec3f *ray_origin, SbVec3f *ray_direction, SbVec3f *retC
             //std::cout<<k<<"\n";
         }
         else{
-            std::cout<<"cube";
+            //std::cout<<"cube";
             //std::cout<<"cube";
             tempCube = objects.at(k);
             intersects = tempCube.intersection(ray_origin, ray_direction, &t_value);
@@ -319,20 +325,20 @@ bool RayTracer::shade(SbVec3f *ray_origin, SbVec3f *ray_direction, SbVec3f *retC
 
     if(closest_object != -1){
                 SbVec3f point_of_intersection ;
-                temp = objects.at(closest_object);
+                //temp = objects.at(closest_object);
                 if(temp.shapeType == 1){
                     //temp = objects.at(closest_object);
                     tempSphere = objects.at(closest_object);
-                    normal_at_intersection = tempSphere.calculate_normal(ray_origin, ray_direction, t_value);
+                    normal_at_intersection = tempSphere.calculate_normal(ray_origin, ray_direction, t_min);
                     normal_at_intersection.normalize(); // N vector at the point of intersection
-                    point_of_intersection = tempSphere.point_of_intersection( ray_origin, ray_direction, t_value);
+                    point_of_intersection = tempSphere.point_of_intersection( ray_origin, ray_direction, t_min);
                     temp = tempSphere;
                     //tempPtr = &temp;
                 }else{
                     tempCube = objects.at(closest_object);
-                    normal_at_intersection = tempCube.calculate_normal(ray_origin, ray_direction, t_value);
+                    normal_at_intersection = tempCube.calculate_normal(ray_origin, ray_direction, t_min);
                     normal_at_intersection.normalize(); // N vector at the point of intersection
-                    point_of_intersection = tempCube.point_of_intersection( ray_origin, ray_direction, t_value);
+                    point_of_intersection = tempCube.point_of_intersection( ray_origin, ray_direction, t_min);
                     temp = tempCube;
                     //tempPtr = &tempCube;
                 }
@@ -347,14 +353,14 @@ bool RayTracer::shade(SbVec3f *ray_origin, SbVec3f *ray_direction, SbVec3f *retC
                         bool shadowFlag = false;
                         //float shadowLevel = 1;
 
-                    if(shadow_on != 0)
+                //    if(shadow_on == 0 || shadowFlag)
                     {
 
                          //shadowLevel = soft_shadow_ray_intersection(&point_of_intersection, j );
                             SbVec3f actual_ray_direction, offset_ray_direction;
                             SbVec3f tempu, tempv, tempn;
                             int number_of_shadow_rays;
-                            if(shadow_on == 1)
+                            if(shadow_on == 1 || shadow_on == 0)
                                 number_of_shadow_rays = 1;
                             else
                                 number_of_shadow_rays = NUMBER_OF_SHADOW_RAYS;
@@ -374,14 +380,19 @@ bool RayTracer::shade(SbVec3f *ray_origin, SbVec3f *ray_direction, SbVec3f *retC
                                     dv = get_random_number();
                                     du = R * (du - 0.5);
                                     dv = R * (dv - 0.5);
-                                    if(shadow_on == 1) {du =0; dv =0;}
+                                    if(shadow_on == 1 || shadow_on == 0) {
+                                        du =0; dv =0;
+                                        offset_ray_direction = actual_ray_direction;
+                                    }
+                                    else{
+                                        offset_ray_direction = actual_ray_direction + (du * tempu) + (dv * tempv);
+                                        offset_ray_direction.normalize();
+                                    }
                                     //offset_ray_direction = actual_ray_direction - (R/2 * u) - (R/2 * v) + (du * R * u) + (dv *R * v);
-                                    offset_ray_direction = actual_ray_direction + (du * tempu) + (dv * tempv);
-                                    offset_ray_direction.normalize();
                                     SbVec3f poi;
                                     poi = point + (epsilon * offset_ray_direction);
                                     //offset_ray_direction = actual_ray_direction;
-                                    if(!shadow_ray_intersection(&poi, &offset_ray_direction, j)){
+                                    if(shadow_on == 0 || !shadow_ray_intersection(&poi, &offset_ray_direction, j)){
                                         //normal_at_intersection = temp.calculate_normal(&poi, &offset_ray_direction, t_value);
                                         //normal_at_intersection.normalize();
                                         SbVec3f V = -1 * (*ray_direction); //view vector
@@ -394,6 +405,7 @@ bool RayTracer::shade(SbVec3f *ray_origin, SbVec3f *ray_direction, SbVec3f *retC
 
                                         float NdotL = normal_at_intersection.dot(L);
                                         float cos_theta = V.dot(R);
+                                        if(temp.transparency > 0) std::cout<<"trnas";
                                         for(int i = 0; i <3; i++){
                                             {
                                                 if(NdotL > 0)
@@ -412,7 +424,7 @@ bool RayTracer::shade(SbVec3f *ray_origin, SbVec3f *ray_direction, SbVec3f *retC
                 SbVec3f refColor(0.0,0.0,0.0);
                 SbVec3f refracColor(0.0,0.0,0.0);
                 // if the current depth of recustion is less than the maximum depth,
-                //reflect the ray and add the color returned dude to the result of reflection
+                //reflect the ray and add the color returned due to the result of reflection
                 if(reflection_on && recursionDepth < 2){
 
                         if(temp.isTransparent){
@@ -439,6 +451,136 @@ bool RayTracer::shade(SbVec3f *ray_origin, SbVec3f *ray_direction, SbVec3f *retC
                 should_color = true;
             }
 
+    *retColor = color;
+    return should_color;
+}
+*/
+
+bool RayTracer::shade(SbVec3f *ray_origin, SbVec3f *ray_direction, SbVec3f *retColor, int recursionDepth, int flag){
+	float t_value, t_min = 999;
+	float epsilon = 0.01;
+	SbVec3f normal_at_intersection;
+	SbVec3f normal_at_intersection1, actual_ray_direction ;
+	bool should_color = false;
+    SbVec3f color;
+    color[0] = 0.0;
+    color[1] = 0.0;
+    color[2] = 0.0;
+    //Cone *tempCone = new Cone();
+    for(int k =0; k<objects.size(); k++){
+        //Object temp1 ;
+        //temp1 = spheres.at(k);
+        Sphere tempSphere;
+        Cube tempCube;
+        Object temp;
+        bool intersects = false;
+        int shapetype = 0;
+        shapetype = objects.at(k).shapeType ;
+        if(shapetype == 1){
+            tempSphere = objects.at(k);
+            intersects = tempSphere.intersection(ray_origin, ray_direction, &t_value);
+        }
+        else{
+            //std::cout<<"cube";
+            tempCube = objects.at(k);
+            intersects = tempCube.intersection(ray_origin, ray_direction, &t_value);
+            //temp = (Cube)tempCube;
+        }
+
+        if(intersects)
+        {
+            if(t_value < t_min && t_value > 0 && t_value !=999) {
+                t_min = t_value;
+                SbVec3f V = -(*ray_direction); //view vector
+                V.normalize();
+                SbVec3f point_of_intersection ;
+
+                if(shapetype == 1){
+                    normal_at_intersection = tempSphere.calculate_normal(ray_origin, ray_direction, t_value);
+                    normal_at_intersection.normalize(); // N vector at the point of intersection
+                    point_of_intersection = tempSphere.point_of_intersection( ray_origin, ray_direction, t_value);
+                    temp = tempSphere;
+                }else{
+                    normal_at_intersection = tempCube.calculate_normal(ray_origin, ray_direction, t_value);
+                    normal_at_intersection.normalize(); // N vector at the point of intersection
+                    point_of_intersection = tempCube.point_of_intersection( ray_origin, ray_direction, t_value);
+                    temp = tempCube;
+                }
+
+
+                for(int i = 0; i <3; i++) {// set the ambient color component
+                        color[i] = (0.2 *  temp.material->ambientColor[0][i] * (1 - temp.transparency ));
+                }
+                // iterate through all the lights and add the diffuse and specular component
+                for(int j = 0; j < lights.size(); j++){
+                        SbVec3f poi;
+
+                        actual_ray_direction = lights.at(j).position - point_of_intersection ;
+                        actual_ray_direction.normalize();
+                        poi = point_of_intersection + (epsilon * actual_ray_direction);
+                        bool shadowFlag = false;
+                        if(shadow_on )
+                            shadowFlag = shadow_ray_intersection(&poi, &actual_ray_direction , j );
+                            //shadowFlag = true;
+                        if(!shadowFlag){
+
+                            SbVec3f L = lights.at(j).position - point_of_intersection;
+                            L.normalize();
+                            SbVec3f R;
+                            R = (2 * normal_at_intersection.dot(L) * normal_at_intersection) - L;
+                            R.normalize();
+                            //SbVec3f H = (V + L);//is using half way vector
+                            //H.normalize();//is using half way vector
+                            //float cos_theta = H.dot(normal_at_intersection); //is using half way vector
+
+                            float NdotL = normal_at_intersection.dot(L);
+                            float cos_theta = V.dot(R);
+
+                            for(int i = 0; i <3; i++){
+                                if(NdotL > 0)
+                                    color[i] += (( NdotL * temp.material->diffuseColor[0][i] * lights.at(j).intensity * lights.at(j).color[i]  * (1 - temp.transparency )));
+                                if(cos_theta > 0)
+                                    color[i] += (( pow(cos_theta, 50) * temp.material->specularColor[0][i]* lights.at(j).intensity * lights.at(j).color[i]) );
+                            }
+                        }
+
+                }
+                SbVec3f refColor(0.0,0.0,0.0);
+                SbVec3f refracColor(0.0,0.0,0.0);
+                // if the current depth of recustion is less than the maximum depth,
+                //reflect the ray and add the color returned dude to the result of reflection
+                //std::cout<<"here";
+                if(refraction_on && recursionDepth < 2){
+                    if(temp.isTransparent){
+                        SbVec3f T;
+                        if(refract(ray_direction, &normal_at_intersection, &T)){
+                            T.normalize();
+                            SbVec3f poi;
+                            poi = point_of_intersection + (0.01* T);
+                            shade(&poi, &T, &refracColor, recursionDepth+1,1);
+                            color = color + (temp.transparency * refracColor);
+                        }
+
+                    }
+                }
+                if(reflection_on && recursionDepth < 2){
+
+                    if(temp.isShiny && !temp.isTransparent){
+                        // compute replection of the ray, R1
+                        SbVec3f R1;
+                        R1 = reflect(&normal_at_intersection, ray_direction);
+                        SbVec3f poi;
+                        poi = point_of_intersection + (0.01* R1);
+                        shade(&poi, &R1, &refColor, recursionDepth+1);
+                        color = color + (temp.shininess * refColor);
+                    }
+                }
+
+                should_color = true;
+            }
+
+        }
+    }
     *retColor = color;
     return should_color;
 }

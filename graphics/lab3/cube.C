@@ -183,6 +183,7 @@ SbVec3f Cube::calculate_normal(SbVec3f *starting_position, SbVec3f *ray_directio
     case 2: normal.setValue(0.0, 0.0, 1.0);
             //normal =  -1 * n;
             break;
+
             /*
     case 4: normal.setValue(1.0, 0.0, 0.0);
             //normal =  -1 * u;

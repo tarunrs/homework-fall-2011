@@ -6,12 +6,13 @@ int main(int argc, char *argv[])
 	string strOutFilename = "no";
 	string strInputFilename = "no";
 	int nXResolution = 0;
+	int refraction_on = 0;
 	int shadow_on = 0;
 	int reflection_on = 0;
 	int nYResolution = 0;
 	int depth_of_field_on = 0;
-	if ( argc != 8){
-		cout << "Usage Error:\nNeeds to be of the form\nrt <input.iv> <output.ppm> <xres> <yres> <shadow_on> <reflection_on>"<< endl;
+	if ( argc != 9){
+		cout << "Usage Error:\nNeeds to be of the form\nrt <input.iv> <output.ppm> <xres> <yres> <shadow_on> <reflection_on> <refraction_on> <depth_of_field>"<< endl;
 		exit(0);
 	}
 	else{
@@ -21,9 +22,10 @@ int main(int argc, char *argv[])
 		nYResolution = atoi(argv[4]);
 		shadow_on = atoi(argv[5]);
 		reflection_on = atoi(argv[6]);
-		depth_of_field_on = atoi(argv[7]);
+		refraction_on = atoi(argv[7]);
+		depth_of_field_on = atoi(argv[8]);
 	}
-	RayTracer rt(strInputFilename, strOutFilename, nXResolution, nYResolution, shadow_on, reflection_on, depth_of_field_on );
+	RayTracer rt(strInputFilename, strOutFilename, nXResolution, nYResolution, shadow_on, reflection_on, refraction_on, depth_of_field_on );
 	rt.trace_rays();
 	return 0;
 }
