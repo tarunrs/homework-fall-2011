@@ -1,6 +1,6 @@
 #include "raytracer.h"
 
-RayTracer::RayTracer(std::string ip_filename, std::string opfilename, int xresolution, int yresolution,int s_on, int r_on, int refract_on, int depth_of_field_on){
+RayTracer::RayTracer(std::string ip_filename, std::string opfilename, int xresolution, int yresolution,int s_on, int r_on, int refract_on, int depth_of_field_on, int super_sampling){
 	x_resolution = xresolution;
 	y_resolution = yresolution;
 	op_filename = opfilename;
@@ -13,6 +13,9 @@ RayTracer::RayTracer(std::string ip_filename, std::string opfilename, int xresol
     refraction_on = refract_on;
     if(refraction_on )
         std::cout<<"Refraction On"<<std::endl;
+    super_sampling_on = super_sampling;
+    if(super_sampling_on)
+        std::cout<<"Supersampling On"<<std::endl;
     focal_length = depth_of_field_on;
 
 	read_open_inventor_scene(ip_filename);
@@ -655,21 +658,32 @@ bool RayTracer::distribute_shade(int i, int j, SbVec3f *position, SbVec3f *color
     float du;
     float dv;
     bool should_color ;
-
-    for(int k =0; k< NUMBER_OF_SAMPLES; k++){
-        du = get_random_number();
-        dv = get_random_number();
-        //pix_pos = calculate_pixel_location(i,j, du, dv);
-        pix_pos = calculate_pixel_location(i,j, 0.5, 0.5);
-        d_vec  = pix_pos - *position;
-        d_vec.normalize();
-//        std::cout<<"Distribute shade";
-        should_color = shade(position, &d_vec, &tempColor, 1);
-        *color = *color + tempColor;
+    int number_of_samples = 2;
+    if(super_sampling_on ==0) {
+            pix_pos = calculate_pixel_location(i,j, 0.5, 0.5);
+            //pix_pos = calculate_pixel_location(i,j, 0.5, 0.5);
+            d_vec  = pix_pos - *position;
+            d_vec.normalize();
+    //        std::cout<<"Distribute shade";
+            should_color = shade(position, &d_vec, color, 1);
     }
-    *color = *color/NUMBER_OF_SAMPLES;
+    else{
+        number_of_samples =16;
+        for(int k =0; k< number_of_samples ; ++k){
+            du = get_random_number();
+            dv = get_random_number();
+            //if(super_sampling_on == 0) { du=0.5; dv=0.5;}
+            pix_pos = calculate_pixel_location(i,j, du, dv);
+            //pix_pos = calculate_pixel_location(i,j, 0.5, 0.5);
+            d_vec  = pix_pos - *position;
+            d_vec.normalize();
+    //        std::cout<<"Distribute shade";
+            should_color = shade(position, &d_vec, &tempColor, 1);
+            *color = *color + tempColor;
+        }
+        *color = *color/number_of_samples ;
+    }
     return should_color;
-
 }
 
 bool RayTracer::depth_of_field(int i, int j, SbVec3f *position, SbVec3f *color){
@@ -718,12 +732,13 @@ void RayTracer::trace_rays(){
 	    if (i%10 == 0) std::cout<<"Percentage complete : "<< i << " %"<<std::endl;
 	    image_row.clear();
         for (j=0; j < x_resolution; j++) {
-	        //bool should_color = distribute_shade(i, j, &(camera->position), &color);
+	        bool should_color = distribute_shade(i, j, &(camera->position), &color);
 	        //bool should_color = depth_of_field(i, j, &(camera->position), &color);
-            pix_pos = calculate_pixel_location(i,j, 0.5, 0.5);
-            d_vec  = pix_pos - camera->position;
-            d_vec.normalize();
-            bool should_color = shade(&(camera->position), &d_vec, &color, 1);
+	        //if()
+            //pix_pos = calculate_pixel_location(i,j, 0.5, 0.5);
+            //d_vec  = pix_pos - camera->position;
+            //d_vec.normalize();
+            //bool should_color = shade(&(camera->position), &d_vec, &color, 1);
             if(should_color)
             {
                 image_row.push_back(Pixel(min(color[0]), min(color[1]), min(color[2])));
