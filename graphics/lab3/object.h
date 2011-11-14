@@ -30,4 +30,7 @@ class Object  {
     SbVec3f multiply_with_transformation(SbVec3f pt);
     float calculate_determinant(float a, float b, float c);
     float calculate_solution(float d, float b, float a);
+    virtual SbVec3f calculate_normal(SbVec3f *starting_position, SbVec3f *ray_direction, float t) { return 0;};
+    //virtual SbVec3f calculate_normal(SbVec3f *starting_position, SbVec3f *ray_direction, float t) { return 0;};
+	//virtual SbVec3f point_of_intersection (SbVec3f *starting_position, SbVec3f *ray_direction, float T){ return 0;};
 };

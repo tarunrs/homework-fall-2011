@@ -24,6 +24,57 @@ Sphere::Sphere ( OSUObjectData * obj) {
 	this->setCoefficients(1,1,1,0,0,0,0,0,0,-1);
 }
 
+Sphere::Sphere(float rad, SbVec3f pos){
+    shapeType = 1;
+	position.setValue(0.0,0.0,0.0);
+	radius = rad;
+	this->setCoefficients(1,1,1,0,0,0,0,0,0,-1);
+	this->translate(pos);
+	//print_vector(position);
+}
+
+void Sphere::translate(SbVec3f trans){
+	SbMatrix T,S, R, F;
+	SbRotation rotation_vector;
+	translation_vector = trans;
+	//radius = 3.0;
+	/*
+	rotation.getValue(rotation_axis, rotation_angle);
+	translation_vector = transformation->translation.getValue();
+	SbMatrix T,S, R, F;
+	T.setTranslate(translation_vector);
+	print_vector(translation_vector);
+	//std::cout << rotation[0] << rotation[1]<<rotation[2]<<rotation[3]; //ntc
+	print_vector(rotation_axis);
+	std::cout<<rotation_angle<<std::endl<<std::endl;
+	*/
+
+	rotation_vector.setValue(SbVec3f(0, 0, 1), 0);
+	rotation_vector.getValue(rotation_axis, rotation_angle);
+	SbVec3f scale_vector;
+    scale_vector.setValue(radius,radius,radius);
+	T.setTranslate(translation_vector);
+	R.setRotate(rotation_vector);
+	S.setScale(scale_vector);
+
+	//std::cout<<"In trans for light";
+	//print_vector(translation_vector);
+	//print_vector(scale_vector);
+	//print_vector(rotation_axis);
+	//std::cout<<rotation_angle<<std::endl<<std::endl;
+//	F = T*R*S;
+    F = S * R *T;
+	SbVec3f pos(0,0,0);
+	F.multVecMatrix(pos, pos);
+	M = F; // save transformation matrix
+	if(M.det4() != 0 ){
+	    iM = F.inverse(); // store inverse if inverse exists
+    }
+	position = pos;
+
+
+}
+
 Sphere::Sphere (const Object& b){
     shapeType = 1;
      m_A = b.m_A;
@@ -73,11 +124,18 @@ void Sphere::transform(SoTransform *transformation){
 
 	scale_vector = transformation->scaleFactor.getValue();
     radius = scale_vector[0];
+
 	SbRotation rotation = transformation->rotation.getValue();
 	rotation.getValue(rotation_axis, rotation_angle);
 	translation_vector = transformation->translation.getValue();
 	SbMatrix T,S, R, F;
 	T.setTranslate(translation_vector);
+	print_vector(translation_vector); //ntc
+	print_vector(scale_vector); //ntc
+	//std::cout << rotation[0] << rotation[1]<<rotation[2]<<rotation[3]; //ntc
+	print_vector(rotation_axis); //ntc
+	std::cout<<rotation_angle<<std::endl<<std::endl;
+
 	R.setRotate(rotation);
 	S.setScale(scale_vector);
 //	F = T*R*S;
@@ -128,3 +186,35 @@ SbVec3f Sphere::calculate_normal(SbVec3f *starting_position, SbVec3f *ray_direct
     //normal =multiply_with_transformation(normal);
     return normal;
 }
+/*
+bool Sphere::intersection (SbVec3f *starting_position, SbVec3f *ray_direction, float* T){
+	double a, b, c,d;
+	SbVec3f emc ,p, D;
+	/*p = *starting_position;
+	D = *ray_direction;
+
+    SbVec3f origin(0.0,0.0,0.0);
+
+	p = multiply_with_inverse(p);
+	D = multiply_with_inverse(D);
+	origin = multiply_with_inverse(origin);
+	D = D - origin;
+	D.normalize();
+
+//std::cout<< "in";
+	emc = (*starting_position - this->position);
+	a = ray_direction->dot(*ray_direction);
+	b = (2 * (*ray_direction)).dot(emc);
+	c = emc.dot(emc) - (this->radius * this->radius);
+	d = calculate_determinant(a, b, c);
+	if(d == -1)
+		return false;
+	else{
+	    *T = calculate_solution(d,b,a);
+	    if(*T != -1)
+		  return true;
+        else
+          return false;
+	}
+}
+*/

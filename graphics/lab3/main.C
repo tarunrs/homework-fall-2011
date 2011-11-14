@@ -9,7 +9,8 @@ int main(int argc, char *argv[])
 	int shadow_on = 0;
 	int reflection_on = 0;
 	int nYResolution = 0;
-	if ( argc != 7){
+	int depth_of_field_on = 0;
+	if ( argc != 8){
 		cout << "Usage Error:\nNeeds to be of the form\nrt <input.iv> <output.ppm> <xres> <yres> <shadow_on> <reflection_on>"<< endl;
 		exit(0);
 	}
@@ -20,8 +21,9 @@ int main(int argc, char *argv[])
 		nYResolution = atoi(argv[4]);
 		shadow_on = atoi(argv[5]);
 		reflection_on = atoi(argv[6]);
+		depth_of_field_on = atoi(argv[7]);
 	}
-	RayTracer rt(strInputFilename, strOutFilename, nXResolution, nYResolution, shadow_on, reflection_on);
+	RayTracer rt(strInputFilename, strOutFilename, nXResolution, nYResolution, shadow_on, reflection_on, depth_of_field_on );
 	rt.trace_rays();
 	return 0;
 }

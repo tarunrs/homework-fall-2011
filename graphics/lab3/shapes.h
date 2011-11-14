@@ -17,8 +17,11 @@ class Sphere : public Object{
 	Sphere();
 	Sphere ( OSUObjectData * obj) ;
 	Sphere (const Object& b);
+	void translate(SbVec3f trans);
+	Sphere(float rad, SbVec3f pos);
 	void transform(SoTransform *transformation);
 	void print_details();
+	//bool intersection (SbVec3f *starting_position, SbVec3f *ray_direction, float* T);
 	SbVec3f calculate_normal(SbVec3f *starting_position, SbVec3f *ray_direction, float t);
 	SbVec3f point_of_intersection (SbVec3f *starting_position, SbVec3f *ray_direction, float T);
 };
