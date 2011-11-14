@@ -519,8 +519,9 @@ bool RayTracer::shade(SbVec3f *ray_origin, SbVec3f *ray_direction, SbVec3f *retC
                         actual_ray_direction.normalize();
                         poi = point_of_intersection + (epsilon * actual_ray_direction);
                         bool shadowFlag = false;
-                        if(shadow_on )
-                            shadowFlag = shadow_ray_intersection(&poi, &actual_ray_direction , j );
+                        if(shadow_on == 0 || shadow_on == 1){
+                            if(shadow_on == 1)
+                                shadowFlag = shadow_ray_intersection(&poi, &actual_ray_direction , j );
                             //shadowFlag = true;
                         if(!shadowFlag){
 
@@ -544,6 +545,68 @@ bool RayTracer::shade(SbVec3f *ray_origin, SbVec3f *ray_direction, SbVec3f *retC
                             }
                         }
 
+                    }
+                        else { // soft shadows
+                            {
+
+                         //shadowLevel = soft_shadow_ray_intersection(&point_of_intersection, j );
+                            SbVec3f actual_ray_direction, offset_ray_direction;
+                            SbVec3f tempu, tempv, tempn;
+                            int number_of_shadow_rays;
+                            number_of_shadow_rays = NUMBER_OF_SHADOW_RAYS;
+                            float epsilon = 0.01;
+                            float R = 0.1;
+                            actual_ray_direction = lights.at(j).position - point_of_intersection ;
+                            actual_ray_direction.normalize();
+                            SbVec3f point = point_of_intersection + (epsilon * actual_ray_direction);
+
+                            calculate_coordinate_system(&tempu, &tempv, &tempn, actual_ray_direction);
+
+                            for(int ir =0; ir< number_of_shadow_rays; ir++){
+
+                                    float du, dv;
+                                    //float t;
+                                    du = get_random_number();
+                                    dv = get_random_number();
+                                    du = R * (du - 0.5);
+                                    dv = R * (dv - 0.5);
+                                    offset_ray_direction = actual_ray_direction + (du * tempu) + (dv * tempv);
+                                    offset_ray_direction.normalize();
+
+                                    //offset_ray_direction = actual_ray_direction - (R/2 * u) - (R/2 * v) + (du * R * u) + (dv *R * v);
+                                    SbVec3f poi;
+                                    poi = point + (epsilon * offset_ray_direction);
+                                    //offset_ray_direction = actual_ray_direction;
+                                    if(!shadow_ray_intersection(&poi, &offset_ray_direction, j)){
+                                        //normal_at_intersection = temp.calculate_normal(&poi, &offset_ray_direction, t_value);
+                                        //normal_at_intersection.normalize();
+                                        SbVec3f V = -1 * (*ray_direction); //view vector
+                                        V.normalize();
+                                        SbVec3f L = offset_ray_direction;
+                                        L.normalize();
+                                        SbVec3f R;
+                                        R = (2 * normal_at_intersection.dot(L) * normal_at_intersection) - L;
+                                        R.normalize();
+
+                                        float NdotL = normal_at_intersection.dot(L);
+                                        float cos_theta = V.dot(R);
+                                        //if(temp.transparency > 0) std::cout<<"trnas";
+                                        for(int i = 0; i <3; i++){
+                                            {
+                                                if(NdotL > 0)
+                                                    color[i] += (( NdotL * temp.material->diffuseColor[0][i] * lights.at(j).intensity * lights.at(j).color[i]  * (1 - temp.transparency ))/ number_of_shadow_rays);
+                                                if(cos_theta > 0)
+                                                    color[i] += (( pow(cos_theta, 50) * temp.material->specularColor[0][i]* lights.at(j).intensity * lights.at(j).color[i]) / number_of_shadow_rays);
+                                            }
+                                        }
+
+                                    }
+
+                    }
+
+                    }
+
+                        }
                 }
                 SbVec3f refColor(0.0,0.0,0.0);
                 SbVec3f refracColor(0.0,0.0,0.0);
@@ -652,6 +715,7 @@ void RayTracer::trace_rays(){
     std::vector<Pixel> image_row;
     color.setValue(0.0,0.0,0.0);
 	for (i=0; i < y_resolution; i++){
+	    if (i%10 == 0) std::cout<<"Percentage complete : "<< i << " %"<<std::endl;
 	    image_row.clear();
         for (j=0; j < x_resolution; j++) {
 	        //bool should_color = distribute_shade(i, j, &(camera->position), &color);
