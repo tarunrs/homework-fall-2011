@@ -8,7 +8,7 @@ void print_vector(SbVec3f vec){
 float get_random_number(){
     float num;
     num = rand()/(float)(RAND_MAX+1);
-    num = -1 * num;
+    //num = -1 * num;
     return num;
 }
 

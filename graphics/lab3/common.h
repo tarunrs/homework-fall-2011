@@ -1,6 +1,8 @@
 #include <iostream>
 #include <stdlib.h>
 #include <math.h>
+#include <fstream>
+#include <sstream>
 #include <Inventor/SbRotation.h>
 #include <Inventor/nodes/SoTransform.h>
 #include <Inventor/nodes/SoSphere.h>
@@ -11,7 +13,9 @@
 #include <vector>
 #include "OSUInventor.h"
 #define PI 3.14159265
-#define NUMBER_OF_CAMERAS 100
+#define DISK_SIZE 30
+//#define DISK_SIZE .75
+#define NUMBER_OF_CAMERAS 200
 #define NUMBER_OF_SAMPLES 16
 #define NUMBER_OF_SHADOW_RAYS 200
 

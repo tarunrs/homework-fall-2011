@@ -8,6 +8,10 @@ class Cone : public Object{
     public:
     Cone();
     Cone(float A, float B, float C);
+    Cone ( OSUObjectData * obj) ;
+    Cone (const Object& b);
+	void transform(SoTransform *transformation);
+
 	SbVec3f calculate_normal(SbVec3f *starting_position, SbVec3f *ray_direction, float t);
 	SbVec3f point_of_intersection (SbVec3f *starting_position, SbVec3f *ray_direction, float T);
 };

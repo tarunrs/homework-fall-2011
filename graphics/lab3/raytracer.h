@@ -18,9 +18,10 @@ class RayTracer{
     float focal_length;
     FILE *fp;
 	OSUInventorScene *scene;
-	int shadow_on, reflection_on, refraction_on, super_sampling_on ;
+	int shadow_on, reflection_on, refraction_on, super_sampling_on, depth_of_field_on ;
 	//std::vector<Sphere> spheres;
 	std::vector<Object> objects;
+	std::vector<int> shapes;
 	std::vector<Light> lights;
 	std::string op_filename;
 	Camera * camera;
@@ -35,6 +36,7 @@ class RayTracer{
 	void read_objects();
 	void read_camera();
 	void read_lights();
+	void read_shapes();
 	void calculate_eye_coordinate_system(Camera *cam);
 	void trace_rays();
 	bool shade(SbVec3f *ray_origin, SbVec3f *ray_direction, SbVec3f *color, int recursionDepth, int flag=0);

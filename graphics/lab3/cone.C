@@ -23,6 +23,89 @@ Cone::Cone(){
     }
 }
 
+Cone::Cone( OSUObjectData * obj) {
+    std::cout<<"Cone Contructing"<<std::endl;
+    shapeType = 3;
+    //m_A = 1;
+    //m_B = -1;
+    //m_C = 1;
+    isShiny = false;
+    isTransparent = false;
+	SoSphere * sph = (SoSphere *)obj->shape;
+	radius = sph->radius.getValue();
+	material = obj->material;
+    const float* s = obj->material->shininess.getValues(0);
+    shininess = s[0];
+    const float* t = obj->material->transparency.getValues(0);
+    transparency = t[0];
+	if(shininess > 0) isShiny = true;
+	if(transparency > 0) isTransparent = true;
+	SoTransform * transformation = obj->transformation;
+	transform(transformation);
+	//this->setCoefficients(1,1,1,0,0,0,0,0,0,-1);
+	this->setCoefficients(-1, 1,1,0,0,0,0,0,0,1);
+}
+
+void Cone::transform(SoTransform *transformation){
+
+	scale_vector = transformation->scaleFactor.getValue();
+    radius = scale_vector[0];
+
+	SbRotation rotation = transformation->rotation.getValue();
+	rotation.getValue(rotation_axis, rotation_angle);
+	translation_vector = transformation->translation.getValue();
+	SbMatrix T,S, R, F;
+	T.setTranslate(translation_vector);
+	print_vector(translation_vector); //ntc
+	print_vector(scale_vector); //ntc
+	//std::cout << rotation[0] << rotation[1]<<rotation[2]<<rotation[3]; //ntc
+	print_vector(rotation_axis); //ntc
+	std::cout<<rotation_angle<<std::endl<<std::endl;
+
+	R.setRotate(rotation);
+	S.setScale(scale_vector);
+//	F = T*R*S;
+    F = S * R *T;
+	SbVec3f pos(0,0,0);
+	F.multVecMatrix(pos, pos);
+	M = F; // save transformation matrix
+	if(M.det4() != 0 ){
+	    iM = F.inverse(); // store inverse if inverse exists
+    }
+	position = pos;
+	print_vector(position);
+}
+
+Cone::Cone(const Object& b){
+    shapeType = 3;
+     m_A = b.m_A;
+     m_B = b.m_B;
+     m_C = b.m_C;
+     m_D = b.m_D;
+     m_E = b.m_E;
+     m_F = b.m_F;
+     m_G = b.m_G;
+     m_H = b.m_H;
+     m_I = b.m_I;
+     m_J = b.m_J;
+     m_K = b.m_K;
+     m_dx = b.m_dx;
+     m_dy = b.m_dy;
+     m_dz = b.m_dz;
+     iM = b.iM;
+     M = b.M;
+     position = b.position;
+     isShiny = b.isShiny;
+     isTransparent = b.isTransparent;
+     radius = b.radius;
+     shininess = b.shininess;
+     transparency = b.transparency;
+     scale_vector = b.scale_vector;
+     translation_vector = b.translation_vector;
+     rotation_axis = b.rotation_axis;
+     rotation_angle = b.rotation_angle;
+     material = b.material;
+   };
 
 Cone::Cone(float A, float B, float C){
     shapeType = 3;
@@ -32,7 +115,7 @@ Cone::Cone(float A, float B, float C){
         SbMatrix T,S, R, F;
     SbRotation rotation(0.01,0.01,0.01,0.01) ;
     SbVec3f trans(0,0,0);
-    SbVec3f scale(0.1,0.1, 0.1);
+    SbVec3f scale(0.1, 0.1, 0.1);
 	T.setTranslate(trans);
 	R.setRotate(rotation);
 	S.setScale(scale);
