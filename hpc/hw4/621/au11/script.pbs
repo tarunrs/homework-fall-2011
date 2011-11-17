@@ -1,0 +1,44 @@
+#
+# This script provides problem sizes via the command line instead of #define
+# in the C source code file. To use this, edit out the "#define n" for problem 2
+# and "#define nx", ""#define ny", and "#define tmax" for problem 3.
+#
+#
+#PBS -l walltime=0:02:00
+#PBS -l nodes=1:ppn=8:newdual
+#PBS -N Assignment4
+#PBS -S /bin/ksh
+#PBS -j oe
+cd $TMPDIR
+cp $HOME/621/au11/Assign4-Prob2-Orig.c .
+cp $HOME/621/au11/Assign4-Prob2-Opt.c .
+cp $HOME/621/au11/Assign4-Prob3-Orig.c .
+cp $HOME/621/au11/Assign4-Prob3-Opt.c .
+
+echo " "; echo "--------------------------------------------------------------"
+echo "Assignment 4, Prob2: Unoptimized Original Version; Size = 4096"
+echo "--------------------------------------------------------------"; echo " "
+gcc -O -fopenmp -D n=4096 Assign4-Prob2-Orig.c -lm; ./a.out
+
+echo " "; echo "---------------------------------------------------"
+echo "Assignment 4, Prob2: Optimized Version; Size = 4096"
+echo "---------------------------------------------------"; echo " "
+gcc -O -fopenmp -D n=4096 Assign4-Prob2-Opt.c -lm; ./a.out
+
+echo " "; echo "-------------------------------------------------------------"
+echo "Assignment 4, Prob3: Unoptimized Original Version; Size = 256"
+echo "-------------------------------------------------------------"; echo " "
+gcc -O -fopenmp -D nx=256 -D ny=256 -D tmax=500 Assign4-Prob3-Orig.c -lm; ./a.out
+echo " "; echo "--------------------------------------------------------------"
+echo "Assignment 4, Prob3: Unoptimized Original Version; Size = 1024"
+echo "--------------------------------------------------------------"; echo " "
+gcc -O -fopenmp -D nx=1024 -D ny=1024 -D tmax=10 Assign4-Prob3-Orig.c -lm; ./a.out
+
+echo " "; echo "--------------------------------------------------"
+echo "Assignment 4, Prob3: Optimized Version; Size = 256"
+echo "--------------------------------------------------"; echo " "
+gcc -O -fopenmp -D nx=256 -D ny=256 -D tmax=500 Assign4-Prob3-Opt.c -lm; ./a.out
+echo " "; echo "---------------------------------------------------"
+echo "Assignment 4, Prob3: Optimized Version; Size = 1024"
+echo "---------------------------------------------------"; echo " "
+gcc -O -fopenmp -D nx=1024 -D ny=1024 -D tmax=10 Assign4-Prob3-Opt.c -lm; ./a.out

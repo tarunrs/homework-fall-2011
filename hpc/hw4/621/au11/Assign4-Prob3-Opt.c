@@ -1,4 +1,4 @@
-// Template for OpenMP Finite-Difference-Time-Domain Exercise
+// Template for Assignment 4 Problem 3
 // Use "gcc -O -fopenmp -lm" to compile
 // Make changes to the Template version below to create parallel version
 
@@ -7,10 +7,7 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <sys/time.h>
-#include<math.h>
-#define nx 1024
-#define ny 1024
-#define tmax 5
+#include <math.h>
 #define coeff1 0.5
 #define coeff2 0.7
 #define threshold (0.000000001)
@@ -103,11 +100,9 @@ main(){
       if (omp_get_num_threads() != nt) 
         printf("Warning: Actual #threads %d differs from requested number %d\n",omp_get_num_threads(),nt);
 
-//#pragma omp master
-	#pragma omp for
+#pragma omp master
       for (tt=0; tt<tmax; tt++)
       {
-
        for (j=0; j<ny; j++)
         ey[0][j] = tt;
   
