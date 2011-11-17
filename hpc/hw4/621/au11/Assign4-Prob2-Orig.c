@@ -79,7 +79,7 @@ main(){
 //#pragma omp master
 #pragma omp parallel private(i,j)
       {
-      #pragma omp for nowait schedule(dynamic, 8)
+      #pragma omp for schedule(dynamic, 16)
         for(i=0;i<n;i++)
             for(j=0;j<n;j++)
           {

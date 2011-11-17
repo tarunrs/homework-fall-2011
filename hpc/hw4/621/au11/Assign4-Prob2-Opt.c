@@ -52,7 +52,7 @@ main(){
   printf("Maximum threads allowed by system is: %d\n",omp_get_max_threads());
 
   // Loop to run test on diffreent number of threads
-  for (nt=1;nt<=4;nt++)
+  for (nt=1;nt<=8;nt++)
    {
     omp_set_num_threads(nt);
 
@@ -68,22 +68,48 @@ main(){
 
   clkbegin = rtclock();
 
-#pragma omp parallel
+//#pragma omp parallel
 // Template version is intentionally made sequential
 // Make suitable changes to create parallel version
     {
-     if (omp_get_thread_num()==0)
-      if (omp_get_num_threads() != nt) 
-        printf("Warning: Actual #threads %d differs from requested number %d\n",omp_get_num_threads(),nt);
+  //   if (omp_get_thread_num()==0)
+    //  if (omp_get_num_threads() != nt)
+      //  printf("Warning: Actual #threads %d differs from requested number %d\n",omp_get_num_threads(),nt);
 
-#pragma omp master
-        for(i=0;i<n;i++)
-          for(j=0;j<n;j++)
+//#pragma omp master
+//#pragma omp parallel private(i,j)
+      {
+      //#pragma omp for schedule(dynamic, 16)
+#pragma omp parallel sections private(i,j)
           {
-           y[i] = y[i] + a[i][j]*x[j];
+#pragma omp section
+              {
+#pragma omp parallel for private(i,j)
+
+        for(i=0;i<n;i++)
+            for(j=0;j<n;j++)
+          {
+              y[i] = y[i] + a[i][j]*x[j];
+              //y[i+1] = y[i+1] + a[i+1][j]*x[j];
+
+  //         z[i] = z[i] + a[j][i]*x[j];
+          }
+
+              }
+#pragma omp section
+              {
+      //#pragma omp for schedule(dynamic, 16)
+       for(j=0;j<n;j++)
+        for(i=0;i<n;i++)
+          {
+//           y[i] = y[i] + a[i][j]*x[j];
            z[i] = z[i] + a[j][i]*x[j];
           }
+        }
+          }
+
     }
+  }
     clkend = rtclock();
     t = clkend-clkbegin;
     printf ("%.1f MFLOPS with %d threads; Time = %.3f sec; ",
