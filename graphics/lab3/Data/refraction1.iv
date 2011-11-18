@@ -30,6 +30,7 @@ Separator {
 	    diffuseColor	0.2 0.4 0.6
 	    specularColor	0.7 0.7 0.7 
 	    transparency 0.95
+	    shininess	0.5
 	}
 	Sphere {
 	}

@@ -31,7 +31,7 @@ RayTracer::RayTracer(std::string ip_filename, std::string opfilename, int xresol
 void RayTracer::read_open_inventor_scene(std::string iv_file){
 	SoDB::init();
 	scene = new OSUInventorScene((char *)iv_file.c_str());
-	read_shapes();
+	//read_shapes();
 	read_objects();
 	std::cout<<"Finished reading objects";
 	read_camera();
@@ -106,11 +106,11 @@ void RayTracer::read_objects(){
                 std::cout << "Object " << i << " is a "
                  << shape_type.getName().getString() << "." << std::endl;
 
-                if (shape_type == SoSphere::getClassTypeId() || shapes.at(i) == 1) {
+                if (shape_type == SoSphere::getClassTypeId()){// || shapes.at(i) == 1) {
                     Sphere * temp = new Sphere(obj);
                     objects.push_back(*temp);
                 }
-                else if (shape_type == SoCube::getClassTypeId()  || shapes.at(i) == 2) {
+                else if (shape_type == SoCube::getClassTypeId()){//}  || shapes.at(i) == 2) {
                     Cube * temp = new Cube(obj);
                     objects.push_back(*temp);
                 }
@@ -480,7 +480,7 @@ bool RayTracer::shade(SbVec3f *ray_origin, SbVec3f *ray_direction, SbVec3f *retC
                             T.normalize();
                             SbVec3f poi;
                             poi = point_of_intersection + (0.01* T);
-                            shade(&poi, &T, &refracColor, recursionDepth+1,1);
+                            shade(&poi, &T, &refracColor, recursionDepth+1);
                             color = color + (temp.transparency * refracColor);
                         }
 
@@ -488,14 +488,15 @@ bool RayTracer::shade(SbVec3f *ray_origin, SbVec3f *ray_direction, SbVec3f *retC
                 }
                 if(reflection_on && recursionDepth < 2){
 
-                    if(temp.isShiny && !temp.isTransparent){
+                    if(temp.isShiny){//} && !temp.isTransparent){
                         // compute replection of the ray, R1
                         SbVec3f R1;
                         R1 = reflect(&normal_at_intersection, ray_direction);
                         SbVec3f poi;
                         poi = point_of_intersection + (0.01* R1);
                         shade(&poi, &R1, &refColor, recursionDepth+1);
-                        color = color + (temp.shininess * refColor);
+                        color = color + ((1 - temp.transparency) * temp.shininess * refColor);
+
                     }
                 }
 
@@ -526,7 +527,7 @@ bool RayTracer::distribute_shade(int i, int j, SbVec3f *position, SbVec3f *color
     }
     else{
         //super sampling on
-        number_of_samples = 16;
+        number_of_samples = NUMBER_OF_SAMPLES;
         for(int k =0; k< number_of_samples ; ++k){
             du = get_random_number();
             dv = get_random_number();
@@ -594,8 +595,10 @@ void RayTracer::trace_rays(){
 	SbVec3f color;
     std::vector<Pixel> image_row;
     color.setValue(0.0,0.0,0.0);
+    std::cout<<"Complete ";
 	for (i=0; i < y_resolution; i++){
-	    if (i%10 == 0) std::cout<<"Complete : "<< i << "/"<<y_resolution<<std::endl;
+	    if (i%20 == 0)
+            std::cout<< i << "/"<<y_resolution<<" Complete"<<std::endl;
 	    image_row.clear();
         for (j=0; j < x_resolution; j++) {
 	        //bool should_color = distribute_shade(i, j, &(camera->position), &color);

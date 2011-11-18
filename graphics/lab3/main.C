@@ -13,7 +13,7 @@ int main(int argc, char *argv[])
 	int depth_of_field_on = 0;
 	int super_sampling =0;
 	if ( argc != 10){
-		cout << "Usage Error:\nNeeds to be of the form\nrt <input.iv> <output.ppm> <xres> <yres> <shadow_on> <reflection_on> <refraction_on> <depth_of_field> <pixel-supersampling>"<< endl;
+		cout << "Usage Error:\nNeeds to be of the form\nrt <input.iv> <output.ppm> <xres> <yres> <pixel-supersampling> <shadow_on> <reflection_on> <refraction_on> <depth_of_field>"<< endl;
 		exit(0);
 	}
 	else{
@@ -21,11 +21,12 @@ int main(int argc, char *argv[])
 		strOutFilename = argv[2];
 		nXResolution = atoi(argv[3]);
 		nYResolution = atoi(argv[4]);
-		shadow_on = atoi(argv[5]);
-		reflection_on = atoi(argv[6]);
-		refraction_on = atoi(argv[7]);
-		depth_of_field_on = atoi(argv[8]);
-		super_sampling = atoi(argv[9]);
+        super_sampling = atoi(argv[5]);
+		shadow_on = atoi(argv[6]);
+		reflection_on = atoi(argv[7]);
+		refraction_on = atoi(argv[8]);
+		depth_of_field_on = atoi(argv[9]);
+
 	}
 	RayTracer rt(strInputFilename, strOutFilename, nXResolution, nYResolution, shadow_on, reflection_on, refraction_on, depth_of_field_on, super_sampling);
 	rt.trace_rays();

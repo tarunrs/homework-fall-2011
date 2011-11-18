@@ -1,4 +1,4 @@
-The Raytracer has been compiled and tested in stdsun.
+The Raytracer has been compiled and tested in stdsun. Images generated as illustrated in the below examples are contained in the "images" directory.
 
 To compile the program, run:
 
@@ -10,14 +10,55 @@ make clean
 
 To run the raytracer run:
 
-./rt <input-file.iv> <output-file.ppm> <xresolution> <yresolution> <shadow_on> <reflection_on>
+./rt <input-file.iv> <output-file.ppm> <xresolution> <yresolution> <pixel-super-sampling-on> <shadow_on> <reflection_on> <refraction-on> <depth-offield-on/focal-length> 
 
 
-Example:
+To generate the images as shown in the sample:
 
-./rt Data/sphere1.iv sphere1.ppm 512 512 0 0
-Will generate the output to sphere1.ppm with both shadows and reflection turned off.
+cubesphere5.iv (Shadow ON Reflection ON)
+./rt Data/cubesphere5.iv out.ppm 512 512 0 1 1 0 0
+images/cubesphere5.png
 
-./rt Data/sphere1.iv sphere1.ppm 512 512 0 1
-Will generate the output to sphere1.ppm with shadows turn off and reflection turned on.
+cubesphere3.iv (Shadow ON Reflection ON)
+./rt Data/cubesphere3.iv out.ppm 512 512 0 1 1 0 0
+images/cubesphere3.png
+
+cubesphere3.iv (Soft-Shadow ON Reflection ON) <- Soft shadows in this picture is more apparent
+./rt Data/cubesphere3.iv out.ppm 512 512 0 2 1 0 0 
+images/cubesphere3-ss.png
+
+sphereCycloid.iv
+./rt Data/sphereCycloid.iv out.ppm 512 512 0 1 1 0 15
+images/sphereCycloid-dof.png
+
+refraction1.iv
+./rt Data/refraction1.iv out.ppm 512 512 0 1 1 1 0
+images/refraction1.png
+
+refraction2.iv
+ ./rt Data/refraction2.iv out.ppm 512 512 0 1 1 1 0
+images/refraction2.png
+
+refraction3.iv
+./rt Data/refraction3.iv out.ppm 512 512 0 1 1 1 0
+images/refraction3.png
+
+Testing pixel-super-sampling
+sphereCycloid.iv
+
+Compare:
+
+./rt Data/sphereCycloid.iv out.ppm 512 512 1 1 1 0 0 
+images/sphereCycloid-ss.png
+
+AND
+./rt Data/sphereCycloid.iv out.ppm 512 512 0 1 1 0 0 
+images/sphereCycloid.png
+
+
+
+Note:  Dealing with shadows for transparent objects: What I am currently doing is this, 
+
+1) shadow ON & refraction ON : I treat the transparent object as a transparent object and not include it as a potential occluder during shadow ray -> object intersection.
+2) shadow ON & refraction OFF: I treat the transparent object as a normal sphere and include it as a potential occluder.
 
