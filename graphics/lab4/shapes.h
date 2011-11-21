@@ -11,7 +11,19 @@ class Cone : public Object{
     Cone ( OSUObjectData * obj) ;
     Cone (const Object& b);
 	void transform(SoTransform *transformation);
+    bool intersection (SbVec3f *starting_position, SbVec3f *ray_direction, float* T);
+	SbVec3f calculate_normal(SbVec3f *starting_position, SbVec3f *ray_direction, float t);
+	SbVec3f point_of_intersection (SbVec3f *starting_position, SbVec3f *ray_direction, float T);
+};
 
+class Cylinder : public Object{
+    public:
+    Cylinder();
+    Cylinder(float A, float B, float C);
+    Cylinder( OSUObjectData * obj) ;
+    Cylinder(const Object& b);
+	void transform(SoTransform *transformation);
+    bool intersection (SbVec3f *starting_position, SbVec3f *ray_direction, float* T);
 	SbVec3f calculate_normal(SbVec3f *starting_position, SbVec3f *ray_direction, float t);
 	SbVec3f point_of_intersection (SbVec3f *starting_position, SbVec3f *ray_direction, float T);
 };

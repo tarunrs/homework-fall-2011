@@ -58,5 +58,7 @@ class RayTracer{
     int min(float val);
     SbVec3f calculate_view_up(SbVec3f actual_ray_direction);
     void calculate_coordinate_system(SbVec3f *u, SbVec3f *v, SbVec3f *n, SbVec3f actual_ray_direction);
+    SbVec3f calculate_texture(SbVec3f poi, Object* obj);
+    float fract(float val);
 };
 

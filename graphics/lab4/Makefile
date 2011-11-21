@@ -13,7 +13,7 @@ CPPFLAGS = -g -DDEBUG
 
 LIBRARIES =  $(COIN_LIBRARIES) -lCoin 
 
-OBJECT_FILES = OSUInventor.o main.o sphere.o raytracer.o camera.o light.o object.o cone.o common.o cube.o
+OBJECT_FILES = OSUInventor.o main.o sphere.o raytracer.o camera.o light.o object.o cone.o common.o cube.o cylinder.o
 EXEC = rt
 
 .C.o:

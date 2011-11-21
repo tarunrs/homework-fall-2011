@@ -19,6 +19,13 @@
 #define NUMBER_OF_SAMPLES 20
 #define NUMBER_OF_SHADOW_RAYS 200
 
+#define TEXTURE_STRIPS 0
+#define TEXTURE_CHECKERBOARD 1
+#define TEXTURE_SMOOTH_COLORS 0
+#define TEXTURE_CONCENTRIC_CIRCLES 0
+#define TEXTURE_WOOD_GRAIN 0
+
+
 
 void print_vector(SbVec3f vec);
 float get_random_number();

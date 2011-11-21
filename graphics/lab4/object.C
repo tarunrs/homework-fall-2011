@@ -12,6 +12,7 @@ Object::Object(){
     m_I = 0.0;
     m_J = 0.0;
     m_K = 1.0;
+    texture = 0;
 }
 
 Object::Object(float p_A, float  p_B, float p_C, float p_D, float p_E, float p_F, float p_G, float p_H, float p_I, float p_J){
@@ -25,6 +26,7 @@ Object::Object(float p_A, float  p_B, float p_C, float p_D, float p_E, float p_F
     m_H = p_H;
     m_I = p_I;
     m_J = p_J;
+    texture = 0;
 }
 
 
@@ -48,6 +50,9 @@ Object::Object(float p_A, float  p_B, float p_C){
     m_C = p_C;
 }
 */
+bool Object::intersection_copy(SbVec3f *starting_position, SbVec3f *ray_direction, float * T){
+    return intersection(starting_position, ray_direction, T);
+}
 bool Object::intersection(SbVec3f *starting_position, SbVec3f *ray_direction, float * T){
     float a, b, c, d;
     float xd, yd, zd;

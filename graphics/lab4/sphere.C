@@ -22,6 +22,7 @@ Sphere::Sphere ( OSUObjectData * obj) {
 	SoTransform * transformation = obj->transformation;
 	transform(transformation);
 	this->setCoefficients(1,1,1,0,0,0,0,0,0,-1);
+	texture =1;
 }
 
 Sphere::Sphere(float rad, SbVec3f pos){
@@ -104,6 +105,7 @@ Sphere::Sphere (const Object& b){
      rotation_axis = b.rotation_axis;
      rotation_angle = b.rotation_angle;
      material = b.material;
+     texture = b.texture;
    };
 
 void Sphere::print_details(){

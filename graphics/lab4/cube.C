@@ -57,6 +57,7 @@ Cube::Cube ( OSUObjectData * obj) {
 	SoTransform * transformation = obj->transformation;
 	transform(transformation);
 	this->setCoefficients(0,0,0,0,0,0,0,0,0,0);
+	texture = 1;
 }
 
 Cube::Cube (const Object& b){
@@ -98,6 +99,7 @@ Cube::Cube (const Object& b){
      rotation_angle = b.rotation_angle;
      material = b.material;
      tip_position = b.tip_position;
+     texture = b.texture;
    };
 
 void Cube::print_details(){
