@@ -185,9 +185,15 @@ SbVec3f Sphere::calculate_normal(SbVec3f *starting_position, SbVec3f *ray_direct
 	rd.normalize();
 
     normal = (sp + (t *(rd))); //ntc
-    //normal =multiply_with_transformation(normal);
+    //normal += nn;
+    //normal = multiply_with_transformation(normal) - multiply_with_transformation(origin);
+    //normal.normalize();
+   // normal = offset_normal(normal, 0.31f);
+    normal.normalize();
     return normal;
 }
+
+
 /*
 bool Sphere::intersection (SbVec3f *starting_position, SbVec3f *ray_direction, float* T){
 	double a, b, c,d;

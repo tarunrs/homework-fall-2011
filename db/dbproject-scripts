@@ -1,0 +1,55 @@
+INSERT INTO customer_wh 
+	SELECT c.C_CUSTKEY, c.C_NAME, n.N_NAME, r.R_NAME, c.C_MKTSEGMENT 
+	FROM customer c, nation n, region r 
+	WHERE c.C_NATIONKEY = n.N_NATIONKEY AND n.N_REGIONKEY = r.R_REGIONKEY;
+
+INSERT INTO product_wh
+		SELECT p.P_PARTKEY, p.P_NAME, p.P_MFGR, p.P_BRAND, p.P_TYPE, p.P_SIZE, p.P_CONTAINER, p.P_RETAILPRICE, 
+min(ps.PS_SUPPLYCOST), max(ps.PS_SUPPLYCOST), avg(ps.PS_SUPPLYCOST) 
+	FROM part p, partsupp ps
+	WHERE p.P_PARTKEY = ps.PS_PARTKEY 
+	GROUP BY p.P_PARTKEY, p.P_NAME, p.P_MFGR, p.P_BRAND, p.P_TYPE, p.P_SIZE, p.P_CONTAINER, p.P_RETAILPRICE ;
+
+INSERT INTO time_wh
+SELECT
+	nid as pm_key,
+	datum AS Date,
+	to_char(datum, 'TMDay') AS WeekdayName,
+	extract(day FROM datum) AS Day,
+	cast (to_char(datum, 'WW') as int) AS Week,
+	extract(month FROM datum) AS Month,
+	extract(year FROM datum) AS Year,
+	cast(to_char(datum, 'Q') as int) AS Quarter,
+	-- Fixed holidays 
+        CASE WHEN to_char(datum, 'MMDD') IN ('0101', '0704', '1225', '1111')
+		THEN 't' ELSE 'f' END
+		AS Holiday_flag,
+	-- Weekend
+	CASE WHEN extract(isodow FROM datum) IN (6, 7) THEN 'f' ELSE 't' END AS Weekday_flag
+FROM (
+	SELECT '1992-01-01'::DATE + sequence.day AS datum, sequence.day as nid
+	FROM generate_series(0,3650) AS sequence(day)
+	GROUP BY sequence.day
+     ) DQ
+ORDER BY 1;
+
+INSERT INTO sales_wh 
+(SW_ORDERKEY ,
+	SW_PRODUCTKEY,
+	SW_TIMEKEY,
+	SW_CUSTKEY,
+	SW_QUANTITY,
+	SW_AVGPRICE,
+	SW_TOTALAMOUNT
+)
+SELECT o.O_ORDERKEY, l.L_PARTKEY, t.TW_TIMEKEY, o.O_CUSTKEY, SUM(l.L_QUANTITY), p.PW_AVGCOST, (p.PW_AVGCOST * SUM(l.L_QUANTITY))
+FROM orders o, time_wh t, lineitem l, product_wh p
+WHERE o.O_ORDERKEY = l.L_ORDERKEY
+	and o.O_ORDERDATE = t.TW_DATE 
+	and p.PW_PRODUCTKEY = l.L_PARTKEY
+GROUP BY o.O_ORDERKEY, l.L_PARTKEY, t.TW_TIMEKEY, o.O_CUSTKEY, p.PW_AVGCOST, l.L_SUPPKEY;
+
+
+
+
+

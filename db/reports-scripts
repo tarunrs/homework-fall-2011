@@ -1,0 +1,2 @@
+select c.CW_REGION, sum(s.SW_TOTALAMOUNT) from time_wh t, customer_wh c, sales_wh s where s.SW_CUSTKEY = c.CW_CUSTKEY and t.TW_TIMEKEY = s.SW_TIMEKEY and t.TW_WEEKDAY_FLAG = 't' group by c.CW_REGION;
+

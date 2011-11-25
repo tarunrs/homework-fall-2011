@@ -419,7 +419,7 @@ bool RayTracer::shade(SbVec3f *ray_origin, SbVec3f *ray_direction, SbVec3f *retC
                                 float NdotL = normal_at_intersection.dot(L);
                                 float cos_theta = V.dot(R);
                                 SbVec3f tempTexture = calculate_texture(point_of_intersection, &temp);
-                                print_vector(tempTexture);
+                                //print_vector(tempTexture);
                                 for(int i = 0; i <3; i++){
                                     if(NdotL > 0)
                                         color[i] += (( NdotL * temp.material->diffuseColor[0][i] * lights.at(j).intensity * lights.at(j).color[i]  * (1 - temp.transparency ))) * tempTexture[i] ;
@@ -677,6 +677,7 @@ void RayTracer::write_to_file(std::vector<std::vector<Pixel> > img){
         }
     }
 }
+
 SbVec3f RayTracer::calculate_texture(SbVec3f poi, Object* obj){
     SbVec3f color;
     float width = 0.1;
@@ -713,6 +714,11 @@ SbVec3f RayTracer::calculate_texture(SbVec3f poi, Object* obj){
                 % 2;
         if(r== 0)
             color.setValue(0.0,0.0,0.0);
+    }else if(obj->texture == TEXTURE_RANDOM_SURFACE){
+            float retNoise;
+            retNoise = noise(poi[0],poi[1],poi[2]);
+            //color.setValue(retNoise, retNoise, retNoise);
+
     }
     //color = poi_in_object_space;
     return color;

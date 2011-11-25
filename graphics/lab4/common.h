@@ -20,10 +20,11 @@
 #define NUMBER_OF_SHADOW_RAYS 200
 
 #define TEXTURE_STRIPS 0
-#define TEXTURE_CHECKERBOARD 1
-#define TEXTURE_SMOOTH_COLORS 0
+#define TEXTURE_CHECKERBOARD 0
+#define TEXTURE_SMOOTH_COLORS 1
 #define TEXTURE_CONCENTRIC_CIRCLES 0
 #define TEXTURE_WOOD_GRAIN 0
+#define TEXTURE_RANDOM_SURFACE 0
 
 
 
@@ -32,3 +33,5 @@ float get_random_number();
 void swap(float *a, float *b);
 float calculate_determinant(float a, float b, float c);
 float calculate_solution(float d, float b, float a);
+double noise(double x, double y, double z) ;
+SbVec3f offset_normal(SbVec3f normal, float bump_by);

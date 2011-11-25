@@ -1,0 +1,90 @@
+ 
+--------------------------------------------------------------
+Assignment 4, Prob2: Unoptimized Original Version; Size = 4096
+--------------------------------------------------------------
+ 
+43.7 Sequential MFLOPS;  
+Maximum threads allowed by system is: 8
+43.3 MFLOPS with 1 threads; Time = 1.552 sec; Passed correctness check
+68.6 MFLOPS with 2 threads; Time = 0.979 sec; Passed correctness check
+93.0 MFLOPS with 3 threads; Time = 0.722 sec; Passed correctness check
+129.9 MFLOPS with 4 threads; Time = 0.517 sec; Passed correctness check
+154.9 MFLOPS with 5 threads; Time = 0.433 sec; Passed correctness check
+186.6 MFLOPS with 6 threads; Time = 0.360 sec; Passed correctness check
+208.9 MFLOPS with 7 threads; Time = 0.321 sec; Passed correctness check
+237.5 MFLOPS with 8 threads; Time = 0.283 sec; Passed correctness check
+ 
+---------------------------------------------------
+Assignment 4, Prob2: Optimized Version; Size = 4096
+---------------------------------------------------
+ 
+43.4 Sequential MFLOPS;  
+Maximum threads allowed by system is: 8
+513.7 MFLOPS with 1 threads; Time = 0.131 sec; Passed correctness check
+429.8 MFLOPS with 2 threads; Time = 0.156 sec; Passed correctness check
+430.8 MFLOPS with 3 threads; Time = 0.156 sec; Passed correctness check
+430.4 MFLOPS with 4 threads; Time = 0.156 sec; Passed correctness check
+434.2 MFLOPS with 5 threads; Time = 0.155 sec; Passed correctness check
+426.2 MFLOPS with 6 threads; Time = 0.157 sec; Passed correctness check
+735.1 MFLOPS with 7 threads; Time = 0.091 sec; Passed correctness check
+741.8 MFLOPS with 8 threads; Time = 0.090 sec; Passed correctness check
+ 
+-------------------------------------------------------------
+Assignment 4, Prob3: Unoptimized Original Version; Size = 256
+-------------------------------------------------------------
+ 
+250.8 Sequential MFLOPS;  
+Maximum threads allowed by system is: 8
+241.7 MFLOPS with 1 threads; Time = 1.356 sec; Passed correctness check
+262.2 MFLOPS with 2 threads; Time = 1.250 sec; Passed correctness check
+378.2 MFLOPS with 3 threads; Time = 0.866 sec; Passed correctness check
+477.1 MFLOPS with 4 threads; Time = 0.687 sec; Passed correctness check
+578.1 MFLOPS with 5 threads; Time = 0.567 sec; Passed correctness check
+601.2 MFLOPS with 6 threads; Time = 0.545 sec; Passed correctness check
+688.8 MFLOPS with 7 threads; Time = 0.476 sec; Passed correctness check
+676.6 MFLOPS with 8 threads; Time = 0.484 sec; Passed correctness check
+ 
+--------------------------------------------------------------
+Assignment 4, Prob3: Unoptimized Original Version; Size = 1024
+--------------------------------------------------------------
+ 
+31.2 Sequential MFLOPS;  
+Maximum threads allowed by system is: 8
+34.6 MFLOPS with 1 threads; Time = 3.033 sec; Passed correctness check
+53.7 MFLOPS with 2 threads; Time = 1.951 sec; Passed correctness check
+71.4 MFLOPS with 3 threads; Time = 1.468 sec; Passed correctness check
+91.6 MFLOPS with 4 threads; Time = 1.144 sec; Passed correctness check
+99.8 MFLOPS with 5 threads; Time = 1.050 sec; Passed correctness check
+109.4 MFLOPS with 6 threads; Time = 0.958 sec; Passed correctness check
+115.1 MFLOPS with 7 threads; Time = 0.911 sec; Passed correctness check
+121.3 MFLOPS with 8 threads; Time = 0.864 sec; Passed correctness check
+ 
+--------------------------------------------------
+Assignment 4, Prob3: Optimized Version; Size = 256
+--------------------------------------------------
+ 
+251.8 Sequential MFLOPS;  
+Maximum threads allowed by system is: 8
+1142.2 MFLOPS with 1 threads; Time = 0.287 sec; Passed correctness check
+2281.3 MFLOPS with 2 threads; Time = 0.144 sec; Passed correctness check
+3370.6 MFLOPS with 3 threads; Time = 0.097 sec; Passed correctness check
+4580.9 MFLOPS with 4 threads; Time = 0.072 sec; Passed correctness check
+5118.6 MFLOPS with 5 threads; Time = 0.064 sec; Passed correctness check
+6420.4 MFLOPS with 6 threads; Time = 0.051 sec; Passed correctness check
+6907.8 MFLOPS with 7 threads; Time = 0.047 sec; Passed correctness check
+7831.0 MFLOPS with 8 threads; Time = 0.042 sec; Passed correctness check
+ 
+---------------------------------------------------
+Assignment 4, Prob3: Optimized Version; Size = 1024
+---------------------------------------------------
+ 
+31.2 Sequential MFLOPS;  
+Maximum threads allowed by system is: 8
+626.9 MFLOPS with 1 threads; Time = 0.167 sec; Passed correctness check
+708.1 MFLOPS with 2 threads; Time = 0.148 sec; Passed correctness check
+694.1 MFLOPS with 3 threads; Time = 0.151 sec; Passed correctness check
+752.4 MFLOPS with 4 threads; Time = 0.139 sec; Passed correctness check
+759.8 MFLOPS with 5 threads; Time = 0.138 sec; Passed correctness check
+753.0 MFLOPS with 6 threads; Time = 0.139 sec; Passed correctness check
+764.4 MFLOPS with 7 threads; Time = 0.137 sec; Passed correctness check
+657.2 MFLOPS with 8 threads; Time = 0.160 sec; Passed correctness check

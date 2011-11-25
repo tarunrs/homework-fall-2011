@@ -70,7 +70,7 @@ main(){
   printf("Maximum threads allowed by system is: %d\n",omp_get_max_threads());
 
   // Loop to run test on diffreent number of threads
-  for (nt=1;nt<=3;nt++)
+  for (nt=1;nt<=8;nt++)
    {
     omp_set_num_threads(nt);
 
@@ -92,30 +92,35 @@ main(){
     }
     clkbegin = rtclock();
 
-#pragma omp parallel
+//#pragma omp parallel
 // Template version is intentionally made sequential
 // Make suitable changes to create parallel version
     {
-     if (omp_get_thread_num()==0)
-      if (omp_get_num_threads() != nt) 
-        printf("Warning: Actual #threads %d differs from requested number %d\n",omp_get_num_threads(),nt);
+     //if (omp_get_thread_num()==0)
+    //  if (omp_get_num_threads() != nt)
+  //      printf("Warning: Actual #threads %d differs from requested number %d\n",omp_get_num_threads(),nt);
 
-#pragma omp master
+//#pragma omp master
       for (tt=0; tt<tmax; tt++)
       {
+
+#pragma omp parallel for schedule(dynamic, 16)
        for (j=0; j<ny; j++)
         ey[0][j] = tt;
-  
+
+#pragma omp parallel for private(i) schedule(dynamic, 16)
        for (j=0; j<ny; j++) 
         for (i=1; i<nx; i++) 
          ey[i][j] = ey[i][j] - coeff1*(hz[i][j]-hz[i-1][j]);
-  
+
+#pragma omp parallel for private(i) schedule(dynamic, 16)
        for (j=1; j<ny; j++) 
-        for (i=0; i<nx; i++) 
+           for (i=0; i<nx; i++)
          ex[i][j] = ex[i][j] - coeff1*(hz[i][j]-hz[i][j-1]);
 
+#pragma omp parallel for private(i) schedule(dynamic, 16)
        for (j=0; j<ny; j++) 
-        for (i=0; i<nx; i++) 
+           for (i=0; i<nx; i++)
          hz[i][j] =  hz[i][j] -
            coeff2*(ex[i][j+1]-ex[i][j]+ey[i+1][j]-ey[i][j]);
       }
