@@ -20,9 +20,9 @@ string queries[] = {
 	"select sum(s.SW_TOTALAMOUNT) from time_wh t, customer_wh c, sales_wh s where s.SW_CUSTKEY = c.CW_CUSTKEY and t.TW_TIMEKEY = s.SW_TIMEKEY and t.TW_WEEKDAY_FLAG = 't' and t.TW_YEAR=1996  group by c.CW_REGION order by c.CW_REGION;",
 	"select sum(s.SW_TOTALAMOUNT) from time_wh t, customer_wh c, sales_wh s where s.SW_CUSTKEY = c.CW_CUSTKEY and t.TW_TIMEKEY = s.SW_TIMEKEY and t.TW_WEEKDAY_FLAG = 'f' and t.TW_YEAR=1996  group by c.CW_REGION order by c.CW_REGION;",
 
-	"select sum(s.SW_TOTALAMOUNT) from  time_wh t, customer_wh c, sales_wh s where s.SW_CUSTKEY = c.CW_CUSTKEY and t.TW_YEAR=1996 ;",
+	"select sum(s.SW_TOTALAMOUNT) from  time_wh t, customer_wh c, sales_wh s where s.SW_CUSTKEY = c.CW_CUSTKEY and t.TW_TIMEKEY = s.SW_TIMEKEY and t.TW_YEAR=1996 ;",
 
-	"select sum(s.SW_TOTALAMOUNT) from  time_wh t, customer_wh c, sales_wh s where s.SW_CUSTKEY = c.CW_CUSTKEY and t.TW_YEAR=1996 group by c.CW_REGION order by c.CW_REGION;",
+	"select sum(s.SW_TOTALAMOUNT) from  time_wh t, customer_wh c, sales_wh s where s.SW_CUSTKEY = c.CW_CUSTKEY and t.TW_TIMEKEY = s.SW_TIMEKEY and t.TW_YEAR=1996 group by c.CW_REGION order by c.CW_REGION;",
 
 	"select sum(s.SW_TOTALAMOUNT) from time_wh t, customer_wh c, sales_wh s where s.SW_CUSTKEY = c.CW_CUSTKEY and t.TW_TIMEKEY = s.SW_TIMEKEY and t.TW_HOLIDAY_FLAG = 't' and t.TW_YEAR=1996 ;",
 	"select sum(s.SW_TOTALAMOUNT) from time_wh t, customer_wh c, sales_wh s where s.SW_CUSTKEY = c.CW_CUSTKEY and t.TW_TIMEKEY = s.SW_TIMEKEY and t.TW_HOLIDAY_FLAG = 'f' and t.TW_YEAR=1996 ;",
@@ -115,7 +115,7 @@ int main (int argc, char **argv)
 			sprintf(tempstr, "%s", PQgetvalue(result, 0, 0));
 			total = tempstr;
 		}
-
+		printf("%d\n", k);
 		PQclear(result);
 	}
 	for(i=7; i<11; i++){
