@@ -13,12 +13,20 @@ PGconn *psql;
 
 string query_update_cluster_head = "update customer_wh set cw_cluster1=";
 string query_update_cluster_trail = " where cw_custkey=";
-string query_all_customers = "select p.pw_productkey, p.pw_retailprice, p.pw_avgcost, sum(s.sw_totalamount)/((max(t.tw_year)-min(t.tw_year)) *12) from sales_wh s, time_wh t, product_wh p where pw_productkey=sw_productkey and sw_timekey =t.tw_timekey group by p.pw_productkey, p.pw_retailprice, p.pw_avgcost ;";
+string query_all_product = "select p.pw_productkey, p.pw_retailprice, p.pw_avgcost, sum(s.sw_totalamount)/((max(t.tw_year)-min(t.tw_year)) *12) from sales_wh s, time_wh t, product_wh p where pw_productkey=sw_productkey and sw_timekey =t.tw_timekey group by p.pw_productkey, p.pw_retailprice, p.pw_avgcost ;";
 
 long total_changes;
 long cluster_centroids[] = {10000, 30000, 50000, 70000, 90000, 110000, 130000, 150000, 170000, 190000};
 double centroid_values[10][3];
 double product_values[200000][4];
+
+void print_centroid_values(){
+	for(int i=0; i<10; i++){
+		for(int j=0; j<3; j++)
+			printf("%f\t", centroid_values[i][j]);
+		printf("\n");
+	}
+}
 
 PGresult *pq_query(const char *format)
 {
@@ -51,9 +59,9 @@ void update_to_db(){
 	char tempstr[2048];
 	PGresult *result;
 	printf("Updating in Database\n Please wait..");
-	for(long i=0; i<150000; i++){
+	for(long i=0; i<200000; i++){
 		string tempQuery;
-		int temp_cluster= customer_values[i][3];
+		int temp_cluster= product_values[i][3];
 		sprintf(tempstr, "%s%d%s%ld;", query_update_cluster_head.c_str(), temp_cluster, query_update_cluster_trail.c_str(), i+1);
 		tempQuery = tempstr;
 		printf("%s\n", tempQuery.c_str());
@@ -106,7 +114,7 @@ void init(){
 	load_from_db();
 	for(int i=0; i<10; i++){
 		printf("Initialising %d\n", i);\
-		get_data_for_customer(cluster_centroids[i], centroid_values[i][0], centroid_values[i][1], centroid_values[i][2]);
+		get_data_for_product(cluster_centroids[i], centroid_values[i][0], centroid_values[i][1], centroid_values[i][2]);
 	}
 
 }
@@ -137,7 +145,7 @@ int find_cluster(double retail_price, double avg_cost, double monthly_sales){
 }
 
 void create_clusters(){
-	for(long prodkey = 1; prodkey <= 150000; prodkey++)
+	for(long prodkey = 1; prodkey <= 200000; prodkey++)
 	{
 		double x,y,z;
 		get_data_for_product(prodkey,x,y,z);
@@ -157,7 +165,7 @@ void update_centroids(){
 		sum[i][0] = sum[i][1]= sum[i][2] = count[i] =0;
 	}
 //	printf("Summing values for centroids\n");
-	for(long i=0; i<150000; i++){
+	for(long i=0; i<200000; i++){
 		int prodkey = product_values[i][3];
 		sum[prodkey][0] += product_values[i][0];
 		sum[prodkey][1] += product_values[i][1];
@@ -203,7 +211,8 @@ int main (int argc, char **argv)
 		if(total_changes == 0)
 		{
 			flag =0;
-			update_to_db();
+			print_centroid_values();
+			//update_to_db();
 		}
 	}
 
