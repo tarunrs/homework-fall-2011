@@ -294,6 +294,29 @@ int bitcount_test(char * bitmap_array){
 	return count;
 }
 
+void and_bitmap(char * dest_bitmap_array, char * first_bitmap_array, char * second_bitmap_array){
+	int num = (6001204/8) +1;
+	long count=0;
+	for(int i=0; i< num; i++){
+		dest_bitmap_array[i] = first_bitmap_array[i] & second_bitmap_array[i];
+	}
+}
+
+void or_bitmap(char * dest_bitmap_array, char * first_bitmap_array, char * second_bitmap_array){
+	int num = (6001204/8) +1;
+	long count=0;
+	for(int i=0; i< num; i++){
+		dest_bitmap_array[i] = first_bitmap_array[i] | second_bitmap_array[i];
+	}
+}
+
+void copy_bitmap(char * dest_bitmap_array, char * source_bitmap_array){
+	int num = (6001204/8) +1;
+	long count=0;
+	for(int i=0; i< num; i++){
+		dest_bitmap_array[i] = source_bitmap_array[i];
+	}
+}
 
 int main(){
 
@@ -313,23 +336,28 @@ int main(){
 		fprintf(stderr, "libpq error: PQstatus(psql) != CONNECTION_OK\n\n");
 		exit(0);
 	}
-
+//
 //	init();
 //	create_bitmaps();
 //	dump_region_bit_map();
-	load_region_bit_map();
-//	if(verify_bitmaps())
-//		printf("Verified\n");
-//	else
-//		printf("Not same\n");
-/*	int regid, salid;
-	while(1){
-		cin>>regid;
-		cin>>salid;
-		cout << test_region_bitmap(regid, salid);
+//	dump_year_bit_map();
+//	dump_nation_bit_map();
+	int num_bytes = 750151;
+	char result_bitmap[750151];
+	for(int i=0; i <750151; i++){
+		result_bitmap[i]=0;
 	}
-*/
-	printf("%d\n", bitcount(bml_region[0]));
+
+	load_region_bit_map();
+	load_year_bit_map();
+	load_nation_bit_map();
+
+	for(int i=0; i<5; i++){
+		//copy_bitmap(result_bitmap, bml_region[i]);
+		and_bitmap(result_bitmap, bml_region[i], bml_year[year_key(1995)]);
+		printf("%s\t\t%d\n", regions[i].c_str(), bitcount(result_bitmap));
+	}
+//	printf("%d\n", bitcount(bml_region[0]));
 	PQfinish(psql);
 	return 0;
 }
