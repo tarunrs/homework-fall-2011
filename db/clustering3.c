@@ -16,7 +16,7 @@ string query_update_cluster_trail = " where cw_custkey=";
 string query_all_product = "select p.pw_productkey, p.pw_retailprice, p.pw_avgcost, sum(s.sw_totalamount)/((max(t.tw_year)-min(t.tw_year)) *12) from sales_wh s, time_wh t, product_wh p where pw_productkey=sw_productkey and sw_timekey =t.tw_timekey group by p.pw_productkey, p.pw_retailprice, p.pw_avgcost ;";
 
 long total_changes;
-long cluster_centroids[] = {10000, 30000, 50000, 70000, 90000, 110000, 130000, 150000, 170000, 190000};
+long cluster_centroids[] = {100, 30, 50123, 70230, 900, 110000, 130032, 15034, 1234, 190000};
 double centroid_values[10][3];
 double product_values[200000][4];
 

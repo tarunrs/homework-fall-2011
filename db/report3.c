@@ -104,7 +104,7 @@ int main (int argc, char **argv)
 				}
 			}
 		index++;
-		printf("index end:%d\n", index);
+                //printf("index end:%d\n", index);
 		PQclear(result);
 	}
 

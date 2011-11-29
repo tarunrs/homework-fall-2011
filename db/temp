@@ -1,0 +1,55 @@
+select p.PW_BRAND, sum(s.sw_quantity) from product_wh p, sales_wh s, time_wh t, customer_wh c
+where s.SW_TIMEKEY = t.TW_TIMEKEY 
+	and p.PW_PRODUCTKEY = s.SW_PRODUCTKEY 
+	and t.TW_YEAR=1994 
+	and t.TW_MONTH=5
+	and c.CW_CUSTKEY = s.SW_CUSTKEY
+	and c.CW_NATION='RUSSIA'
+group by p.PW_BRAND order by PW_BRAND;
+
+select c.CW_NATION , count(DISTINCT s.SW_PRODUCTKEY) from product_wh p, time_wh t, sales_wh s, customer_wh c
+where p.PW_PRODUCTKEY = s.SW_PRODUCTKEY 
+	and t.TW_TIMEKEY = s.SW_TIMEKEY 
+	and t.TW_YEAR=1992
+	AND c.CW_CUSTKEY= s.SW_CUSTKEY
+group by c.CW_NATION
+order by c.CW_NATION ;
+
+select PW_NAME from product_wh where 
+	PW_PRODUCTKEY NOT IN(
+		SELECT s.SW_PRODUCTKEY from
+		time_wh t, sales_wh s, customer_wh c
+		where t.TW_TIMEKEY = s.SW_TIMEKEY 
+			and t.TW_YEAR=1995  
+			AND t.TW_MONTH < 7
+			AND c.CW_CUSTKEY= s.SW_CUSTKEY
+			AND c.CW_REGION='ASIA');
+17171
+
+select tw_day_in_number from time_wh where tw_month =5  and tw_day_of_week = 'Monday' order by tw_day_in_number desc;
+
+select c.cw_region, count(*) from
+sales_wh s, customer_wh c, time_wh t
+where s.sw_timekey = t.tw_timekey and
+s.sw_custkey = c.cw_custkey and
+t.tw_year =1995
+group by c.cw_region;
+
+
+select c.cw_nation, count(*) from
+sales_wh s, customer_wh c
+where s.sw_custkey = c.cw_custkey and
+c.cw_region = 'EUROPE'
+group by c.cw_nation;
+
+select count(*) from
+sales_wh s, customer_wh c, time_wh t
+where s.sw_custkey = c.cw_custkey and
+s.sw_timekey = t.tw_timekey and
+t.tw_year = 1994 and
+(c.cw_region = 'AMERICA' or c.cw_region ='ASIA');
+
+select count(*) from
+sales_wh s, customer_wh c
+where s.sw_custkey = c.cw_custkey and
+c.cw_nation in ('FRANCE', 'GERMANY', 'BRAZIL','ALGERIA', 'JAPAN');

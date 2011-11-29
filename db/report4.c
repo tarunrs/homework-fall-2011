@@ -96,7 +96,7 @@ int main (int argc, char **argv)
 				sprintf(tempstr, "%s", PQgetvalue(result, i, 1));
 				results[i][k] = tempstr;	
 			}
-		printf("Done:%d\n", k);
+                //printf("Done:%d\n", k);
 		PQclear(result);
 	}
 // populate totals per nation
@@ -116,7 +116,7 @@ int main (int argc, char **argv)
 // totals per month
 	results[25][0] = "Total     ";
 	for(int k=1; k<13; k++){
-		printf("Doing:%d\n", k);
+                //printf("Doing:%d\n", k);
 		string tempQuery;
 		sprintf(tempstr, "%s%d%s", query_head_month.c_str(), k, query_trail_month.c_str());
 		tempQuery = tempstr;
@@ -128,9 +128,9 @@ int main (int argc, char **argv)
 			exit(0);
 		}
 		sprintf(tempstr, "%s", PQgetvalue(result, 0, 0));
-		printf("Storing:%d\n", k);
+                //printf("Storing:%d\n", k);
 		results[25][k] = tempstr;	
-		printf("Done:%d\n", k);
+                //printf("Done:%d\n", k);
 		PQclear(result);
 	}
 	

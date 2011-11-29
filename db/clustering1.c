@@ -24,6 +24,14 @@ long cluster_centroids[] = {7000, 22000, 37000, 52000, 67000, 82000, 97000, 1120
 double centroid_values[10][3];
 double customer_values[160000][4];
 
+void print_centroid_values(){
+        for(int i=0; i<10; i++){
+                for(int j=0; j<3; j++)
+                        printf("%f\t", centroid_values[i][j]);
+                printf("\n");
+        }
+}
+
 PGresult *pq_query(const char *format)
 {
 	PGresult *result;
@@ -217,7 +225,8 @@ int main (int argc, char **argv)
 		if(total_changes == 0)
 		{
 			flag =0;
-			update_to_db();
+                        //update_to_db();
+                        print_centroid_values();
 		}
 	}
 

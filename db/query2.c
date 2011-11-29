@@ -7,10 +7,10 @@
 #include <algorithm>
 #include <functional> 
 #include <locale>
+#include <sys/time.h>
 #include "libpq-fe.h"
 
 using namespace std;
-PGconn *psql;
 
 char bm_region[5][751500];
 char bml_region[5][751500];
@@ -23,7 +23,6 @@ string nations[] = {"ALGERIA", "ARGENTINA", "BRAZIL", "CANADA", "EGYPT", "ETHIOP
 int years[] ={1992, 1993,1994, 1995,1996, 1997,1998, 1999, 2000, 2001};
 char num[2];
 
-string query = "select s.sw_saleskey, c.cw_region, c.cw_nation, t.tw_year from sales_wh s, time_wh t, customer_wh c where s.SW_TIMEKEY = t.TW_TIMEKEY and s.sw_custkey = c.cw_custkey ;";
 
 // trim from start
 static inline std::string &ltrim(std::string &s) {
@@ -42,27 +41,6 @@ static inline std::string &trim(std::string &s) {
         return ltrim(rtrim(s));
 }
 
-
-PGresult *pq_query(const char *format)
-{
-	PGresult *result;
-	result = PQexec(psql, format);
-	return(result);
-}
-
-char * pq_escape (char *input)
-{
-	int len;
-	char *output;
-	len = strlen(input);
-	if (len < 1)
-		return(NULL);
-	output = (char *)malloc((len * 2) + 1);
-	if (!output)
-		return(NULL);
-	PQescapeString(output, input, len);
-	return(output);
-}
 
 int region_key(string inp){
 	for(int i=0; i<5; i++){
@@ -87,45 +65,6 @@ int year_key(int inp){
 	}
 	printf("%d\t", inp);
 	printf("Year Error!\n");
-}
-
-void dump_region_bit_map(){
-	int i;
-	char tmpstr[1024];
-	string fname = "region";
-	FILE *fp;
-	fp = fopen(fname.c_str(), "w");
-	if(fp){
-		printf("writing file: %d\n", sizeof(bm_region));
-		fwrite (bm_region , 1 , sizeof(bm_region) , fp );
-	}
-	fclose(fp);
-}
-
-void dump_nation_bit_map(){
-	int i;
-	char tmpstr[1024];
-	string fname = "nation";
-	FILE *fp;
-	fp = fopen(fname.c_str(), "w");
-	if(fp){
-		printf("writing file: %d\n", sizeof(bm_nation));
-		fwrite (bm_nation , 1 , sizeof(bm_nation) , fp );
-	}
-	fclose(fp);
-}
-
-void dump_year_bit_map(){
-	int i;
-	char tmpstr[1024];
-	string fname = "year";
-	FILE *fp;
-	fp = fopen(fname.c_str(), "w");
-	if(fp){
-		printf("writing file: %d\n", sizeof(bm_year));
-		fwrite (bm_year , 1 , sizeof(bm_year) , fp );
-	}
-	fclose(fp);
 }
 
 void load_region_bit_map(){
@@ -169,103 +108,6 @@ void load_year_bit_map(){
 	}
 	fclose(fp);
 }
-bool verify_bitmaps(){
-	for(int i=0;i<5;i++)
-		for(int j=0;j<751500;j++)
-			if(bm_region[i][j]!=bml_region[i][j]) return false;
-	return true;
-}
-
-void init(){
-	for(int i=0;i<5;i++)
-		for(int j=0;j<751500;j++)
-			bm_region[i][j] = 0;
-	for(int i=0;i<25;i++)
-		for(int j=0;j<751500;j++)
-			bm_nation[i][j] = 0;
-	for(int i=0;i<10;i++)
-		for(int j=0;j<751500;j++)
-			bm_year[i][j] = 0;
-}	
-
-const char *byte_to_binary(int x)
-{
-    static char b[9];
-    b[0] = '\0';
-
-    int z;
-    for (z = 128; z > 0; z >>= 1)
-    {
-        strcat(b, ((x & z) == z) ? "1" : "0");
-    }
-
-    return b;
-}
-
-bool test(int pos){
-	return (num[pos/8] & (int) pow(2, 7-pos%8)) ;
-}
-
-void set(int pos){
-	num[pos/8] = num[pos/8] | (int)pow(2,7 - (pos%8));
-}
-
-void set_region_bitmap(int regionid, long pos){
-	bm_region[regionid][pos/8] = bm_region[regionid][pos/8] | (int)pow(2,7 - (pos%8));
-}
-
-void set_nation_bitmap(int nationid, long pos){
-	bm_nation[nationid][pos/8] = bm_nation[nationid][pos/8] | (int)pow(2,7 - (pos%8));
-}
-
-void set_year_bitmap(int yearid, long pos){
-	bm_year[yearid][pos/8] = bm_year[yearid][pos/8] | (int)pow(2,7 - (pos%8));
-}
-
-bool test_region_bitmap(int regionid, int pos){
-	return (bml_region[regionid][pos/8] & (int) pow(2, 7-pos%8)) ;
-}
-
-bool test_nation_bitmap(int nationid, int pos){
-	return (bml_nation[nationid][pos/8] & (int) pow(2, 7-pos%8)) ;
-}
-
-bool test_year_bitmap(int yearid, int pos){
-	return (bml_year[yearid][pos/8] & (int) pow(2, 7-pos%8)) ;
-}
-
-void create_bitmaps(){
-	char tempstr[2048];
-	PGresult *result;
-	result = pq_query(query.c_str());
-	int num_rows = PQntuples(result);
-	for(long i=0; i< num_rows; i++){
-		if(i%1000 == 0) printf("Done : %ld\n", i);
-		int regionid, nationid, yearid;
-		long salesid;
-		int year;
-		string region, nation;
-		sprintf(tempstr, "%s", PQgetvalue(result, i, 0));
-		salesid = atol(tempstr);
-
-		sprintf(tempstr, "%s", PQgetvalue(result, i, 1));
-		region = tempstr;
-		regionid = region_key(region);
-
-		sprintf(tempstr, "%s", PQgetvalue(result, i, 2));
-		nation = tempstr;
-		nationid = nation_key(nation);
-
-		sprintf(tempstr, "%s", PQgetvalue(result, i, 3));
-		year = atoi(tempstr);
-		yearid = year_key(year);
-
-		set_region_bitmap(regionid, salesid);
-		set_nation_bitmap(nationid, salesid);
-		set_year_bitmap(yearid, salesid);
-	}
-}
-
 int bitcount_in_byte (unsigned char n) {
    int count = 0;
    while (n) {
@@ -317,31 +159,17 @@ void copy_bitmap(char * dest_bitmap_array, char * source_bitmap_array){
 		dest_bitmap_array[i] = source_bitmap_array[i];
 	}
 }
-
+double rtclock()
+{
+  struct timezone Tzp;
+  struct timeval Tp;
+  int stat;
+  stat = gettimeofday (&Tp, &Tzp);
+  if (stat != 0) printf("Error return from gettimeofday: %d",stat);
+  return(Tp.tv_sec + Tp.tv_usec*1.0e-6);
+}
 int main(){
 
-	char *data_safe;
-	char tempstr[2048];
-	int i, j;
-	PGresult *result;
-	psql = PQconnectdb("hostaddr = '127.0.0.1' port = '' dbname = 'dbproject' user = 'tarun' password = 'tarun123' connect_timeout = '10'");
-	/* init connection */
-	if (!psql)
-	{
-		fprintf(stderr, "libpq error: PQconnectdb returned NULL.\n\n");
-		exit(0);
-	}
-	if (PQstatus(psql) != CONNECTION_OK)
-	{
-		fprintf(stderr, "libpq error: PQstatus(psql) != CONNECTION_OK\n\n");
-		exit(0);
-	}
-//
-//	init();
-//	create_bitmaps();
-//	dump_region_bit_map();
-//	dump_year_bit_map();
-//	dump_nation_bit_map();
 	int num_bytes = 750151;
 	char result_bitmap[750151];
 	for(int i=0; i <750151; i++){
@@ -351,15 +179,17 @@ int main(){
 	load_region_bit_map();
 	load_year_bit_map();
 	load_nation_bit_map();
+        double clkbegin, clkend, t;
 
+        clkbegin = rtclock();
 	for(int i=0; i<25; i++){
-		//copy_bitmap(result_bitmap, bml_region[i]);
 		and_bitmap(result_bitmap, bml_region[region_key("EUROPE")], bml_nation[i]);
 		int cnt = bitcount(result_bitmap);
 		if(cnt)
 			printf("%s\t\t%d\n", nations[i].c_str(),cnt );
 	}
-//	printf("%d\n", bitcount(bml_region[0]));
-	PQfinish(psql);
+        clkend = rtclock();
+        t = clkend-clkbegin;
+        printf("\nTime: %f sec\n", t);
 	return 0;
 }

@@ -77,13 +77,13 @@ int main (int argc, char **argv)
 	}
 	for (i = 0; i < j; i++)
 	{
-		printf("%d\n", i);
+                //printf("%d\n", i);
 		sprintf(tempstr, "%s", PQgetvalue(result, i, 0));
 		results[i][0] = tempstr;	
 	}
 
 	for(int k=5; k<=12; k++){
-		printf("%d\n", k);
+                //printf("%d\n", k);
 		string tempQuery;
 		sprintf(tempstr, "%s%d%s", query_head.c_str(), k, query_trail.c_str());
 		tempQuery = tempstr;
@@ -100,7 +100,7 @@ int main (int argc, char **argv)
 			results[i][k-4] = tempstr;	
 			}
 		
-		printf("%d\n", k);
+                //printf("%d\n", k);
 		PQclear(result);
 	}
 // find the total
@@ -129,7 +129,7 @@ int main (int argc, char **argv)
 // total by month
 
 	for(int k=5; k<=12; k++){
-		printf("%d\n", k);
+                //printf("%d\n", k);
 		string tempQuery;
 		sprintf(tempstr, "%s%d%s", query_total_head.c_str(), k, query_total_trail.c_str());
 		tempQuery = tempstr;
@@ -143,7 +143,7 @@ int main (int argc, char **argv)
 		sprintf(tempstr, "%s", PQgetvalue(result, 0, 0));
 		results[25][k-4] = tempstr;	
 		
-		printf("2 %d\n", k);
+                //printf("2 %d\n", k);
 		PQclear(result);
 	}
 	results[25][0] = "Total";
