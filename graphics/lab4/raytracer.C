@@ -1,9 +1,10 @@
 #include "raytracer.h"
 
-RayTracer::RayTracer(std::string ip_filename, std::string opfilename, int xresolution, int yresolution,int s_on, int r_on, int refract_on, int dof_on, int super_sampling){
+RayTracer::RayTracer(std::string ip_filename, std::string opfilename, std::string shapefilename, int xresolution, int yresolution,int s_on, int r_on, int refract_on, int dof_on, int super_sampling){
 	x_resolution = xresolution;
 	y_resolution = yresolution;
 	op_filename = opfilename;
+	shape_filename = shapefilename;
 	shadow_on = s_on;
 	if(shadow_on)
         std::cout<<"Shadow On"<<std::endl;
@@ -24,8 +25,9 @@ RayTracer::RayTracer(std::string ip_filename, std::string opfilename, int xresol
         focal_length = dof_on;
         depth_of_field_on = 1;
     }
-
+    perlin_init();
 	read_open_inventor_scene(ip_filename);
+
 }
 
 void RayTracer::read_open_inventor_scene(std::string iv_file){
@@ -108,19 +110,23 @@ void RayTracer::read_objects(){
 
                 if (shapes.at(i) == 3) {
                     Cone * temp = new Cone(obj);
+                    temp->texture = textures.at(i);
                     objects.push_back(*temp);
                 }
                 else  if (shapes.at(i) == 4) {
                     std::cout<<"Recognised Cylinder"<<std::endl;
                     Cylinder * temp = new Cylinder(obj);
+                    temp->texture = textures.at(i);
                     objects.push_back(*temp);
                 }
                 else if (shape_type == SoSphere::getClassTypeId() || shapes.at(i) == 1) {
                     Sphere * temp = new Sphere(obj);
+                    temp->texture = textures.at(i);
                     objects.push_back(*temp);
                 }
                 else if (shape_type == SoCube::getClassTypeId()  || shapes.at(i) == 2) {
                     Cube * temp = new Cube(obj);
+                    temp->texture = textures.at(i);
                     objects.push_back(*temp);
                 }
         }
@@ -129,7 +135,7 @@ void RayTracer::read_objects(){
 void RayTracer::read_shapes(){
     std::cout<<"Reading shapes";
     std::string filename;
-    filename = "shapes";
+    filename = shape_filename;
     std::ifstream ifile;
     ifile.open(filename.c_str());
     std::string element;
@@ -144,6 +150,8 @@ void RayTracer::read_shapes(){
             shapes.push_back(3);
         else if(element == "cylinder")
             shapes.push_back(4);
+        else
+            textures.push_back(atoi(element.c_str()));
     }
 }
 
@@ -240,16 +248,32 @@ bool RayTracer::shadow_ray_intersection(SbVec3f *point_of_intersection, SbVec3f 
         bool intersects = false;
         int shapetype = 0;
         shapetype = objects.at(j).shapeType ;
+
+
         if(shapetype == 1){
             Sphere tempSphere = objects.at(j);
             if(tempSphere.transparency > 0 && refraction_on) continue;
             intersects = tempSphere.intersection(point_of_intersection, ray_direction, &t_value);
             //intersects = tempSphere.intersection(&poi, &ray_direction, &t_value);
         }
+        else if (shapetype ==2){
+            //std::cout<<"cube";
+
+            Cube tempCube = objects.at(j);
+            if(tempCube.transparency > 0 && refraction_on) continue;
+            intersects = tempCube.intersection(point_of_intersection, ray_direction, &t_value);
+            //temp = (Cube)tempCube;
+        }else if (shapetype == 3){
+            Cone tempCone = objects.at(j);
+            if(tempCone.transparency > 0 && refraction_on)  continue;
+            intersects = tempCone.intersection(point_of_intersection, ray_direction, &t_value);
+
+        }
         else{
             //std::cout<<"cube";
-            Cube tempCube = objects.at(j);
-            intersects = tempCube.intersection(point_of_intersection, ray_direction, &t_value);
+            Cube tempCylinder = objects.at(j);
+            if(tempCylinder.transparency > 0 && refraction_on) continue;
+            intersects = tempCylinder.intersection(point_of_intersection, ray_direction, &t_value);
             //intersects = tempCube.intersection(&poi, &ray_direction, &t_value);
             //temp = (Cube)tempCube;
         }
@@ -566,7 +590,6 @@ bool RayTracer::distribute_shade(int i, int j, SbVec3f *position, SbVec3f *color
 }
 
 bool RayTracer::depth_of_field(int i, int j, SbVec3f *position, SbVec3f *color){
-    //SbVec3f pix_pos, d_vec;
     SbVec3f tempColor;
     float R = DISK_SIZE;
     float du;
@@ -575,11 +598,6 @@ bool RayTracer::depth_of_field(int i, int j, SbVec3f *position, SbVec3f *color){
     int number_of_jitter_positions = NUMBER_OF_CAMERAS;
 
     if(depth_of_field_on == 0) {
-          //  std::cout<<"No Depth of field";
-            //depth of field off
-            //pix_pos = calculate_pixel_location(i,j, 0.5, 0.5);
-           // d_vec  = pix_pos - *position;
-           // d_vec.normalize();
             should_color = distribute_shade(i,j, position, color);
     }
     else{
@@ -587,14 +605,7 @@ bool RayTracer::depth_of_field(int i, int j, SbVec3f *position, SbVec3f *color){
             SbVec3f camera_position = *position;
             du = get_random_number();
             dv = get_random_number();
-            //du = (du ) * R;
-            //dv = (dv ) * R;
-            //std::cout<<pixel_height<<pixel_width <<std::endl;
-            //camera_position = camera_position  + (du * R * this->u) + (dv * R * this->v);
             camera_position = camera_position  + (du * R * pixel_width * this->u) + (dv * pixel_height * R * this->v);
-            //pix_pos = calculate_pixel_location(i,j, 0.5, 0.5);
-            //d_vec  = pix_pos - (camera_position);
-            //d_vec.normalize();
             tempColor.setValue(0.0,0.0,0.0);
             should_color = distribute_shade(i, j, &camera_position,&tempColor);
             *color = *color + tempColor;
@@ -637,7 +648,7 @@ void RayTracer::trace_rays(){
                 image_row.push_back(Pixel(min(color[0]), min(color[1]), min(color[2])));
             }
             else
-                image_row.push_back(Pixel(0,0,0));
+                image_row.push_back(Pixel(5,5,5));
 
         }
         image.push_back(image_row);
@@ -696,9 +707,9 @@ SbVec3f RayTracer::calculate_texture(SbVec3f poi, Object* obj){
     else if(obj->texture == TEXTURE_STRIPS)
     {
         float sine = 0;
-        sine = sin(pie* poi_in_object_space[0] / width);
+        sine = sin(pie* poi_in_object_space[2] / width);
         if(sine > 0)
-            color.setValue(0.0,0.0,0.0);
+            color.setValue(0.8,0.8,0.8);
     }
     else if(obj->texture == TEXTURE_CONCENTRIC_CIRCLES){
         float r;
@@ -708,17 +719,38 @@ SbVec3f RayTracer::calculate_texture(SbVec3f poi, Object* obj){
     }
     else if(obj->texture == TEXTURE_CHECKERBOARD){
         float r;
-        r = ((int) (poi_in_object_space[0]/width) +
-            (int) (poi_in_object_space[1]/width) +
-            (int) (poi_in_object_space[2]/width) )
+        float width = 0.2;
+        r = ((int) (poi[0]/width) +
+            (int) (poi[1]/width) +
+            (int) (poi[2]/width) )
                 % 2;
         if(r== 0)
-            color.setValue(0.0,0.0,0.0);
-    }else if(obj->texture == TEXTURE_RANDOM_SURFACE){
-            float retNoise;
-            retNoise = noise(poi[0],poi[1],poi[2]);
-            //color.setValue(retNoise, retNoise, retNoise);
+            color.setValue(0.5,0.5,0.5);
+    }else if(obj->texture == TEXTURE_WOOD_GRAIN){
+            float retNoise1;
+            retNoise1 = noise(poi[0],poi[1],poi[2]);
+            color.setValue(retNoise1, retNoise1, retNoise1);
 
+    }
+    else if(obj->texture == TEXTURE_RANDOM_SURFACE){
+            float retNoise1, retNoise2, retNoise3;
+            retNoise1 = noise(poi[0],poi[1],poi[2]);
+            retNoise2 = noise(poi[1],poi[2],poi[0]);
+            retNoise3 = noise(poi[2],poi[0],poi[1]);
+
+            color.setValue(retNoise1, retNoise2, retNoise3);
+    }
+
+    else if(obj->texture == TEXTURE_CUSTOM1){
+        int r;
+        float width = 0.4;
+        r = abs(((int) (poi_in_object_space[0]/width) +
+            (int) (poi_in_object_space[1]/width) +
+            (int) (poi_in_object_space[2]/width) )
+                % 10);
+                std::cout<<r<<std::endl;
+                float val = (float) r/ 10.0;
+        color.setValue(val,val,val);
     }
     //color = poi_in_object_space;
     return color;

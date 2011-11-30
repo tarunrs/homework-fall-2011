@@ -105,6 +105,7 @@ Cone::Cone(const Object& b){
      rotation_axis = b.rotation_axis;
      rotation_angle = b.rotation_angle;
      material = b.material;
+     texture = b.texture;
    };
 
 Cone::Cone(float A, float B, float C){

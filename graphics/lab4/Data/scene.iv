@@ -1,0 +1,139 @@
+#Inventor V2.1 ascii
+
+PerspectiveCamera {
+    position	0.0 0.0 15.0
+    orientation	-1 0 0  0.0
+    nearDistance 5.48532
+    farDistance	9.32612
+    focalDistance 7.40381
+}
+
+
+Separator {
+
+# light
+  PointLight {
+    on TRUE
+    intensity 0.8
+    color 1 1 0
+    location 0 -1.25 0
+  }
+}
+
+
+Separator {
+
+# light
+  PointLight {
+    on TRUE
+    intensity 0.6
+    color 1 1 1
+    location 5 1 15
+  }
+}
+
+
+
+# sphere 1
+  Separator {
+
+    Transform {
+      translation 0 -4 0
+      scaleFactor 1 1.5 1
+	rotation 0 1 0 0.45
+    }
+    Material {
+      diffuseColor  0.98 0.93 0.36
+      specularColor 0.1 0.1 0.1
+      shininess 0.0
+      transparency 0
+      ambientColor 0.2 0.2 0.2
+    }
+    Sphere {}
+  }
+
+  Separator {
+
+    Transform {
+      translation 0 1 0
+      scaleFactor 1 1 1
+    }
+    Material {
+      diffuseColor  1.0 1.0 1.0
+      specularColor 0.5 0.5 0.5
+      shininess 0
+      transparency 0.001
+      ambientColor 0.2 0.2 0.2
+    }
+    Sphere {}
+  }
+
+
+
+  Separator {
+
+    Transform {
+      translation 0 -5.5 0
+      rotation 1 1 1 0
+      scaleFactor 20 .1 2
+    }
+
+    Material {
+      diffuseColor 0.56 0.42 0.14
+      specularColor 1 1 1
+      shininess 0.0
+      ambientColor 0.2 0.2 0.2
+    }
+    Cube{} 
+ }
+
+  Separator {
+
+    Transform {
+      translation -3 -5.3 0
+      rotation 1 1 1 0
+      scaleFactor 1 .1 1
+    }
+
+    Material {
+      diffuseColor 0.56 0.56 0.56
+      specularColor 1 1 1
+      shininess 0.0
+      ambientColor 0.2 0.2 0.2
+    }
+    Cube{} 
+ }
+Separator {
+
+    Transform {
+      translation 0 -0.85 0
+      scaleFactor 0.5 0.5 0.5
+    }
+    Material {
+      diffuseColor  1 1 0
+      specularColor 0.5 0.5 0.5
+      shininess 0
+      transparency 0.1
+      ambientColor 0.2 0.2 0.2
+    }
+    Sphere {}
+  }
+
+  Separator {
+
+    Transform {
+      translation -3 -4 0
+      rotation 1 1 1 0.45
+      scaleFactor 1 1 1
+    }
+
+    Material {
+      diffuseColor 0.56 0.56 0.56
+      specularColor 1 1 1
+      shininess 0
+      transparency 0.001
+      ambientColor 0.2 0.2 0.2
+    }
+    Sphere{} 
+ }
+

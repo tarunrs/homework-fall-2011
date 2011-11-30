@@ -22,8 +22,10 @@ class RayTracer{
 	//std::vector<Sphere> spheres;
 	std::vector<Object> objects;
 	std::vector<int> shapes;
+	std::vector<int> textures;
 	std::vector<Light> lights;
 	std::string op_filename;
+	std::string shape_filename;
 	Camera * camera;
 	float image_height, image_width;
 	SbVec3f image_C, image_L;
@@ -31,7 +33,7 @@ class RayTracer{
 	SbVec3f u,v,n;
 	int x_resolution, y_resolution;
     std::vector<std::vector<Pixel> > image;
-	RayTracer ( std::string ip_filename, std::string op_filename, int xresolution, int yresolution,int s_on, int r_on, int refract_on, int depth_of_field_on, int super_sampling);
+	RayTracer ( std::string ip_filename, std::string op_filename,std::string shape_filename, int xresolution, int yresolution,int s_on, int r_on, int refract_on, int depth_of_field_on, int super_sampling);
 	void read_open_inventor_scene(std::string iv_file);
 	void read_objects();
 	void read_camera();

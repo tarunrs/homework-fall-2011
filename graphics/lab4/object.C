@@ -64,8 +64,15 @@ bool Object::intersection(SbVec3f *starting_position, SbVec3f *ray_direction, fl
     rd = multiply_with_inverse(rd);
     origin = multiply_with_inverse(origin);
     rd = rd - origin;
+
     rd.normalize();
     sp = multiply_with_inverse(sp);
+    //sp = multiply_with_inverse(sp);
+	//rd = multiply_with_inverse(rd);
+	//origin = multiply_with_inverse(origin);
+	//rd = rd - origin;
+	//rd = multiply_with_inverse(*starting_position + *ray_direction) - sp;
+
 
     xd = rd[0];
     yd = rd[1];
@@ -103,6 +110,23 @@ bool Object::intersection(SbVec3f *starting_position, SbVec3f *ray_direction, fl
 SbVec3f Object::multiply_with_inverse(SbVec3f pt){
     SbVec3f des;
     iM.multVecMatrix(pt, des);
+    return des;
+}
+
+SbVec3f Object::multiply_with_inverse_transpose(SbVec3f pt){
+    SbVec3f des;
+    SbMatrix temp;
+    temp = iM.transpose();
+    temp.multVecMatrix(pt, des);
+    //iM.tramultVecMatrix(pt, des);
+    return des;
+}
+
+
+SbVec3f Object::multiply_with_transpose(SbVec3f pt){
+    SbVec3f des;
+    M.transpose().multVecMatrix(pt, des);
+    //iM.tramultVecMatrix(pt, des);
     return des;
 }
 

@@ -30,6 +30,8 @@ class Object  {
     bool intersection_copy(SbVec3f *starting_position, SbVec3f *ray_direction, float * T);
     SbVec3f multiply_with_inverse(SbVec3f pt);
     SbVec3f multiply_with_transformation(SbVec3f pt);
+    SbVec3f multiply_with_inverse_transpose(SbVec3f pt);
+    SbVec3f multiply_with_transpose(SbVec3f pt);
     float calculate_determinant(float a, float b, float c);
     float calculate_solution(float d, float b, float a);
     virtual SbVec3f calculate_normal(SbVec3f *starting_position, SbVec3f *ray_direction, float t) { return 0;};
