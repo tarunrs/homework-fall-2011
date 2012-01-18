@@ -11,9 +11,15 @@ include-dateline no
 include-body yes
 stop-words yes
 stem-words no
-limit-dimention no
+limit-dimension no
 dimention-size 1000
 threshold-min 5
 threshold-max 3000
-
-
+gen-fv-set yes
+gen-fv-count no
+gen-fv-count-sparse yes
+gen-fd-file no
+gen-fd-unique-file no
+gen-wf-file no
+gen-wf-unique-file no
+gen-dimension-file yes
