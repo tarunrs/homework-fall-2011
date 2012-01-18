@@ -1,0 +1,19 @@
+num-files 2
+include-date no
+include-topics yes
+include-places yes
+include-people no
+include-orgs no
+include-exhanges no
+include-companies yes
+include-title yes
+include-dateline no
+include-body yes
+stop-words yes
+stem-words no
+limit-dimention no
+dimention-size 1000
+threshold-min 5
+threshold-max 3000
+
+
