@@ -1,0 +1,13 @@
+To compile the code:
+
+Problem 1:
+
+> g++ problem1.c
+> ./a.out
+
+Problem 2:
+
+> g++ problem2.c
+> ./a.out
+
+The code runs for 100 iterations to allow for enough exploration. After this condition it runs till number of changes reduces to zero compared to the previous time. This gives a convergance to 3 decimal places.
