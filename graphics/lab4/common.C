@@ -1,6 +1,5 @@
 #include "common.h"
 
-
 void print_vector(SbVec3f vec){
 	std::cout <<" ("<<vec[0]<<","<<vec[1]<<","<<vec[2]<<")"<<std::endl;
 }
@@ -43,6 +42,12 @@ float calculate_solution(float d, float b, float a){
 
 }
 
+
+/* ATTRIBUTION: The perlin noise function is directly based on the code given at
+http://www.codermind.com/articles/Raytracer-in-C++-Part-III-Textures.html
+Do not consider it for extra credit if you think it is wrong
+*/
+
 struct perlin
 {
   int p[512];
@@ -55,7 +60,7 @@ int permutation[256] ;
 
 void perlin_init(){
     time_t seconds;
-    time(&seconds);  // this function returns the current time to the variable seconds
+    time(&seconds);
     srand((unsigned int)seconds);
     for(int i=0; i<256; i++){
         permutation[i] = rand() % 256;
@@ -125,7 +130,6 @@ SbVec3f offset_normal(SbVec3f normal, float bump_by ){
     print_vector(normal);
     float temp = normal.dot(normal);
     if(temp == 0.0f) return normal;
-    //temp = invsqrtf(temp);
     temp = sqrt(temp);
     temp = 1.0f/temp;
 
@@ -134,3 +138,4 @@ SbVec3f offset_normal(SbVec3f normal, float bump_by ){
     std::cout<<temp<<std::endl<<std::endl;
     return normal;
 }
+

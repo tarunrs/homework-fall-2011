@@ -8,57 +8,32 @@ To clear the object files and the executable, run:
 
 make clean
 
-To run the raytracer run:
+To run the raytracer, run:
 
-./rt <input-file.iv> <output-file.ppm> <xresolution> <yresolution> <pixel-super-sampling-on> <shadow_on> <reflection_on> <refraction-on> <depth-offield-on/focal-length> 
+./rt <input-file.iv> <output-file.ppm> <xresolution> <yresolution> <pixel-super-sampling-on> <shadow_on> <reflection_on> <refraction-on> <depth-offield-on/focal-length> <shapes-file>
 
+To run the scene file I have created, run:
+./rt Data/scene.iv out.ppm 512 512 0 1 1 1 0 shapesexample
 
-To generate the images as shown in the sample:
+The shapes file contains the name of the shape and texture of the shape corresponding to the object in the scene file (iv file)
 
-cubesphere5.iv (Shadow ON Reflection ON)
-./rt Data/cubesphere5.iv out.ppm 512 512 0 1 1 0 0
-images/cubesphere5.png
+In the example provided: (filename  - shapesexample)
+sphere 0 -> The transformed sphere in the center with solid color / no texture
+cone 5 -> Cone with Perlin Noise (Part of the lamp)
+cube 1 -> The table with strips to emulate wood
+cube 2 -> The cube on left side of the table with a checkerboard pattern
+sphere 0 -> The sphere that is the bulb inside the lamp (no texture)
+sphere 3 -> The sphere with smooth colors, on the table
+cylinder 5 -> Cylinder with Perlin noise (Part of the lamp)
+cube 0 -> Cube with a solid color that emulates the wire holding the lamp up
 
-cubesphere3.iv (Shadow ON Reflection ON)
-./rt Data/cubesphere3.iv out.ppm 512 512 0 1 1 0 0
-images/cubesphere3.png
-
-cubesphere3.iv (Soft-Shadow ON Reflection ON) <- Soft shadows in this picture is more apparent
-./rt Data/cubesphere3.iv out.ppm 512 512 0 2 1 0 0 
-images/cubesphere3-ss.png
-
-sphereCycloid.iv
-./rt Data/sphereCycloid.iv out.ppm 512 512 0 1 1 0 15
-images/sphereCycloid-dof.png
-
-refraction1.iv
-./rt Data/refraction1.iv out.ppm 512 512 0 1 1 1 0
-images/refraction1.png
-
-refraction2.iv
- ./rt Data/refraction2.iv out.ppm 512 512 0 1 1 1 0
-images/refraction2.png
-
-refraction3.iv
-./rt Data/refraction3.iv out.ppm 512 512 0 1 1 1 0
-images/refraction3.png
-
-Testing pixel-super-sampling
-sphereCycloid.iv
-
-Compare:
-
-./rt Data/sphereCycloid.iv out.ppm 512 512 1 1 1 0 0 
-images/sphereCycloid-ss.png
-
-AND
-./rt Data/sphereCycloid.iv out.ppm 512 512 0 1 1 0 0 
-images/sphereCycloid.png
-
-
-
-Note:  Dealing with shadows for transparent objects: What I am currently doing is this, 
-
-1) shadow ON & refraction ON : I treat the transparent object as a transparent object and not include it as a potential occluder during shadow ray -> object intersection.
-2) shadow ON & refraction OFF: I treat the transparent object as a normal sphere and include it as a potential occluder.
+ -------------------------------
+|Texture Type		Flag	|
+|-------------------------------|
+|STRIPS 		1	|
+|CHECKERBOARD 		2	|
+|SMOOTH COLORS 		3	|
+|CONCENTRIC CIRCLES 	4	|
+|PERLIN NOISE 		5	|
+ -------------------------------
 

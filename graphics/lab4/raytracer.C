@@ -648,7 +648,7 @@ void RayTracer::trace_rays(){
                 image_row.push_back(Pixel(min(color[0]), min(color[1]), min(color[2])));
             }
             else
-                image_row.push_back(Pixel(5,5,5));
+                image_row.push_back(Pixel(25,25,25));
 
         }
         image.push_back(image_row);
@@ -748,7 +748,7 @@ SbVec3f RayTracer::calculate_texture(SbVec3f poi, Object* obj){
             (int) (poi_in_object_space[1]/width) +
             (int) (poi_in_object_space[2]/width) )
                 % 10);
-                std::cout<<r<<std::endl;
+                //std::cout<<r<<std::endl;
                 float val = (float) r/ 10.0;
         color.setValue(val,val,val);
     }
@@ -758,7 +758,7 @@ SbVec3f RayTracer::calculate_texture(SbVec3f poi, Object* obj){
 }
 
 float RayTracer::fract(float val){
-    return (val - floorf(val));
+    return (val - floor(val));
 }
 
 int RayTracer::min(float val){

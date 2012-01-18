@@ -7,7 +7,7 @@
 class Cone : public Object{
     public:
     Cone();
-    Cone(float A, float B, float C);
+    Cone(float X, float Y, float Z);
     Cone ( OSUObjectData * obj) ;
     Cone (const Object& b);
 	void transform(SoTransform *transformation);
@@ -19,7 +19,7 @@ class Cone : public Object{
 class Cylinder : public Object{
     public:
     Cylinder();
-    Cylinder(float A, float B, float C);
+    Cylinder(float X, float Y, float Z);
     Cylinder( OSUObjectData * obj) ;
     Cylinder(const Object& b);
 	void transform(SoTransform *transformation);

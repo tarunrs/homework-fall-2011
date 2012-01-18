@@ -106,6 +106,7 @@ Cylinder::Cylinder(const Object& b){
      rotation_axis = b.rotation_axis;
      rotation_angle = b.rotation_angle;
      material = b.material;
+     texture = b.texture;
    };
 
 Cylinder::Cylinder(float A, float B, float C){
