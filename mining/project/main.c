@@ -167,7 +167,7 @@ struct compare_words {
 };
 */
 void print_article(article a){
-    int i;
+    unsigned int i;
     //"PEOPLE", "ORGS", "EXCHANGES", "COMPANIES", "UNKNOWN", "TEXT"
     cout << "Date : " << a.date << endl;
     cout << "Dateline : " << a.dateline << endl;
@@ -205,20 +205,26 @@ void print_article(article a){
 
 }
 string delete_tags(string tag, string text){
-    int index;
-    int end_inde;
-    index = text.find("<" + tag + ">");
+    unsigned int index;
+    int end_index;
+    //index = text.find("<" + tag + ">");
+    index = text.find("<" + tag );//+ ">");
     if(index != string::npos)
-        text.erase(index, tag.length()+2);
+    {
+        end_index = text.find(">", index);
+        text.erase(index, end_index - index+1);
+    }
+
     index = text.find("</" + tag + ">");
     if(index != string::npos)
         text.erase(index, tag.length()+3);
+    //cout << text <<endl;
     return text;
 }
 
 vector<string> get_list(string node){
     int start_index = 0;
-    int end_index = 0;
+    unsigned int end_index = 0;
     string temp;
     vector<string> lst;
     end_index = node.find("</D>", start_index);
@@ -235,12 +241,15 @@ vector<string> get_list(string node){
 }
 void get_article_content (string text, article &a){
     int start_index = 0;
-    int end_index = 0;
+    unsigned int end_index = 0;
     string temp = "";
+    bool flag = true;
+    //cout << "Text in get article : " << text <<endl;
+
     start_index = text.find("<TITLE>", 0);
     end_index = text.find("</TITLE>", start_index);
     if(end_index != string::npos)
-        temp = text.substr(start_index, end_index - start_index);
+        {temp = text.substr(start_index, end_index - start_index); flag = false ; }
     temp = delete_tags("TITLE", temp);
     //cout << temp << endl;
     a.title = temp;
@@ -261,17 +270,27 @@ void get_article_content (string text, article &a){
     start_index = text.find("<BODY>", 0);
     end_index = text.find("</BODY>", start_index);
     if(end_index != string::npos)
+    {
         temp = text.substr(start_index, end_index - start_index);
-    temp = delete_tags("BODY", temp);
-    a.body= temp;
+        temp = delete_tags("BODY", temp);
+        a.body= temp;
+    }
+    else if(flag)
+    {
+        a.body= text;
+    }
+    else{
+        a.body = "";
+    }
+
         //cout << temp << endl;
     temp.clear();
 }
 //
 int get_id(string str){
-    int start_index;
+    unsigned int start_index;
     int end_index;
-    int num;
+    int num = 0;
     start_index = str.find("\"");
     if(start_index != string::npos){
         end_index = str.find("\"", start_index+1);
@@ -284,7 +303,6 @@ int get_id(string str){
 }
 
 article create_article(vector<string> tokens){
-    int i = 0;
     //"PEOPLE", "ORGS", "EXCHANGES", "COMPANIES", "UNKNOWN", "TEXT"
     article temp;
     //temp.oldid = tokens.at(0);
@@ -299,7 +317,7 @@ article create_article(vector<string> tokens){
     temp.exchanges = get_list(delete_tags("EXCHANGES", tokens.at(7)));
     temp.companies = get_list(delete_tags("COMPANIES", tokens.at(8)));
     //temp.body =
-    cout << tokens.at(10) << endl;
+    //cout << tokens.at(10) << endl;
     if(tokens.size() > 9)
         get_article_content(delete_tags("TEXT", tokens.at(10)), temp);
     else {temp.body = "" , temp.title = "" , temp.dateline = "";};
@@ -359,7 +377,7 @@ string clean_up(string data){
             data.erase(0);
         else if(data.find("&") != string::npos){
             int start_index = data.find("&") ;
-            int end_index = data.find(";") ;
+            unsigned int end_index = data.find(";") ;
             if(end_index != string::npos) data.erase(start_index, end_index - start_index + 1);
         }
 
@@ -415,17 +433,17 @@ void parse_and_enter_into_set(article art){
     if(conf.title)
         fields.push_back (art.title);
     if(conf.topics)
-        for(int i=0; i< art.topics.size(); i++)
+        for(unsigned int i=0; i< art.topics.size(); i++)
             fields.push_back (art.topics.at(i));
     if(conf.places)
-        for(int i=0; i< art.places.size(); i++)
+        for(unsigned int i=0; i< art.places.size(); i++)
             fields.push_back (art.places.at(i));
     if(conf.companies)
-        for(int i=0; i< art.companies.size(); i++)
+        for(unsigned int i=0; i< art.companies.size(); i++)
             fields.push_back (art.companies.at(i));
 
 
-    for(int i = 0; i < fields.size(); i++){
+    for(unsigned int i = 0; i < fields.size(); i++){
         stringstream ss(fields.at(i));
         while(ss >> temp){
             temp = clean_up(temp);
@@ -474,13 +492,13 @@ void generate_feature_vectors(){
     map<string, int>::const_iterator pos;
     set<string>::const_iterator pos_set;
     map<string, int> candidate_set;
-    for(int i = 0; i < articles.size() ; i++){
+    for(unsigned int i = 0; i < articles.size() ; i++){
         vec.class_labels.clear();
         vec.words.clear();
         vec.counts.clear();
         art = articles.at(i);
         candidate_set = candidate_sets.at(i);
-        for(int j = 0; j < art.topics.size(); j++)
+        for(unsigned int j = 0; j < art.topics.size(); j++)
             {
             vec.class_labels.insert(art.topics.at(j));
             }
@@ -539,7 +557,7 @@ void dump_feature_vectors(){
     return;
     cout << "Writing Feature vectors" << endl;
     //for(int i =0 ; i < articles.size(); i++ ){
-    for(int i =0 ; i < features.size(); i++ ){
+    for(unsigned int i =0 ; i < features.size(); i++ ){
         f_vec  = features.at(i);
         //cout << "Writing: " << endl;
         if(conf.gen_fv_set)
@@ -568,13 +586,13 @@ void dump_feature_vectors(){
         }
 
         if(conf.gen_fv_count){
-            for(int j = 0; j < f_vec.counts.size(); j++)
+            for(unsigned int j = 0; j < f_vec.counts.size(); j++)
                 ff1 << f_vec.counts.at(j) << " ";
             ff1 << "}" << endl;
         }
 
         if(conf.gen_fv_count_sparse){
-            for(int j = 0; j < f_vec.counts.size(); j++)
+            for(unsigned int j = 0; j < f_vec.counts.size(); j++)
                 if(f_vec.counts.at(j) != 0) ff2 << j+1 << " (" << f_vec.counts.at(j) << ") ";
             ff2 << "}" << endl;
         }
@@ -750,7 +768,7 @@ double rtclock()
 
 void parse_articles(){
     cout << "Parsing articles" << endl;
-    for(int i =0; i < articles.size(); i++){
+    for(unsigned int i =0; i < articles.size(); i++){
         article temp_a = articles.at(i);
         parse_and_enter_into_set(temp_a);
     }
@@ -762,12 +780,11 @@ void load_file(){
     string accumulator;
     vector<string> tokens;
     int main_index = 0;
-    int start_index = 0;
 
 
     for(int i= 0; i < conf.num_files; i++){
     //for(int i= 0; i < 2; i++){
-        char filename[13];
+        char filename[14];
         if(i <10) sprintf(filename, "reut2-00%d.sgm", i);
         else sprintf(filename, "reut2-0%d.sgm", i);
         ifstream ff( filename, ios::in );
@@ -798,8 +815,8 @@ void load_file(){
                 string end_node = "</" + main_nodes[main_index] + ">";
                 string start_node = "<" + main_nodes[main_index];//+ ">";
                 if(name.find(end_node) != string::npos) {
-                    cout << name << endl;
-                    cout << accumulator << endl;
+                    //cout << name << endl;
+                    //cout << accumulator << endl;
                     if(name.find(start_node) != string::npos)
                         accumulator = name;
                     else
@@ -841,18 +858,14 @@ int main()
     load_file();
     //exit(0);
     cout << "Total number of articles : " << articles.size() << endl;
-    int count = 0 ;
+    /*int count = 0 ;
     for(int i =0; i < articles.size(); i++){
         if(articles.at(i).body == "") {cout << i+1 << " " << articles.at(i).nid << " | "; count++;}
-        //if(i == 29)
-        {
-            print_article(articles.at(i));//for(int)
-        }
-
     }
-    cout << "count : " << count;
+    cout << "Number of blank bodies : " << count;
     //print_article(articles.at(610));
-    exit(0);
+    //exit(0);
+    */
     parse_articles();
     cout << "Total number of words : " << words.size() << endl;
 

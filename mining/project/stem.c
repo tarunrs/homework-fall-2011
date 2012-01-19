@@ -123,7 +123,7 @@ static int cvc(int i)
 
 /* ends(s) is TRUE <=> k0,...k ends with the string s. */
 
-static int ends(char * s)
+static int ends(const char * s)
 {  int length = s[0];
    if (s[length] != b[k]) return FALSE; /* tiny speed-up */
    if (length > k-k0+1) return FALSE;
@@ -135,7 +135,7 @@ static int ends(char * s)
 /* setto(s) sets (j+1),...k to the characters in the string s, readjusting
    k. */
 
-static void setto(char * s)
+static void setto(const char * s)
 {  int length = s[0];
    memmove(b+j+1,s+1,length);
    k = j+length;
@@ -143,7 +143,7 @@ static void setto(char * s)
 
 /* r(s) is used further down. */
 
-static void r(char * s) { if (m() > 0) setto(s); }
+static void r(const char * s) { if (m() > 0) setto(s); }
 
 /* step1ab() gets rid of plurals and -ed or -ing. e.g.
 
@@ -290,7 +290,7 @@ static void step5()
 {  j = k;
    if (b[k] == 'e')
    {  int a = m();
-      if (a > 1 || a == 1 && !cvc(k-1)) k--;
+      if (a > 1 || (a == 1 && !cvc(k-1))) k--;
    }
    if (b[k] == 'l' && doublec(k) && m() > 1) k--;
 }
