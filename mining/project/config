@@ -1,4 +1,4 @@
-num-files 22
+num-files 1
 include-date no
 include-topics yes
 include-places yes
@@ -16,6 +16,7 @@ dimension-size 1000
 threshold-min 10
 threshold-max 2000
 gen-fv-set yes
+gen-fv-title yes
 gen-fv-count no
 gen-fv-count-sparse yes
 gen-fd-with-strings no

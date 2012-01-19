@@ -32,11 +32,12 @@ struct feature_vector {
     set <string> class_labels;
     map <string, int> words;
     vector <int> counts;
+    set <string> titular_words;
 };
 
 struct config {
     bool date, topics, places, people, orgs, exchanges, companies, unknown, title, dateline, body, stopwords, stemwords, limit;
-    bool gen_fv_set, gen_fv_count, gen_fv_count_sparse, gen_fd_file, gen_fd_unique_file, gen_wf_file, gen_wf_unique_file, gen_dimension_file, gen_fd_with_strings;
+    bool gen_fv_set, gen_fv_count, gen_fv_count_sparse, gen_fd_file, gen_fd_unique_file, gen_wf_file, gen_wf_unique_file, gen_dimension_file, gen_fd_with_strings, gen_fv_title;
     int threshold_min, threshold_max;
     int dim_limit;
     int num_files;
@@ -101,6 +102,8 @@ void load_conf(){
             conf.gen_fv_count = (config_value == "yes" ? true : false);
         else if(config_key == "gen-fv-count-sparse")
             conf.gen_fv_count_sparse = (config_value == "yes" ? true : false);
+        else if(config_key == "gen-fv-title")
+            conf.gen_fv_title = (config_value == "yes" ? true : false);
         else if(config_key == "gen-fd-file")
             conf.gen_fd_file = (config_value == "yes" ? true : false);
         else if(config_key == "gen-fd-unique-file")
@@ -138,9 +141,11 @@ void print_conf(){
     cout << "Threshold Minimum : " << conf.threshold_min<< endl;
     cout << "Threshold Maximum : " << conf.threshold_max<< endl;
 
-    cout << "Generate Feature Vector set: " << conf.gen_fv_set<< endl;
-    cout << "Generate Feature Vector count: " << conf.gen_fv_count<< endl;
-    cout << "Generate Feature Vector count (sparse): " << conf.gen_fv_count_sparse<< endl;
+    cout << "Generate Feature Vector - Word set: " << conf.gen_fv_set<< endl;
+    cout << "Generate Feature Vector - Word count: " << conf.gen_fv_count<< endl;
+    cout << "Generate Feature Vector - Word count (sparse): " << conf.gen_fv_count_sparse<< endl;
+    cout << "Generate Feature Vector - Titular Words: " << conf.gen_fv_title << endl;
+
     cout << "Generate Frequency Distribution : " << conf.gen_fd_file << endl;
     cout << "Generate Frequency Distribution (Unique in document) : " << conf.gen_fd_unique_file<< endl;
     cout << "Generate Word Frequency : " << conf.gen_wf_file << endl;
@@ -201,6 +206,7 @@ void print_article(article a){
 }
 string delete_tags(string tag, string text){
     int index;
+    int end_inde;
     index = text.find("<" + tag + ">");
     if(index != string::npos)
         text.erase(index, tag.length()+2);
@@ -293,6 +299,7 @@ article create_article(vector<string> tokens){
     temp.exchanges = get_list(delete_tags("EXCHANGES", tokens.at(7)));
     temp.companies = get_list(delete_tags("COMPANIES", tokens.at(8)));
     //temp.body =
+    cout << tokens.at(10) << endl;
     if(tokens.size() > 9)
         get_article_content(delete_tags("TEXT", tokens.at(10)), temp);
     else {temp.body = "" , temp.title = "" , temp.dateline = "";};
@@ -379,6 +386,23 @@ string stem_word(string str){
     //cout << str << " " << temp << endl;
     return s;
 
+}
+
+set <string> get_set_from_string(string str){
+    set <string> temp_set;
+    string temp;
+    stringstream ss(str);
+
+    while(ss >> temp){
+        temp = clean_up(temp);
+        if(conf.stemwords) temp = stem_word(temp);
+        if(temp.length() > 1)  {
+            if(stop_words.find(temp) == stop_words.end())
+                temp_set.insert(temp);
+        }
+    }
+
+    return temp_set;
 }
 
 void parse_and_enter_into_set(article art){
@@ -475,6 +499,7 @@ void generate_feature_vectors(){
                 vec.counts.push_back(0);
 
         }
+        vec.titular_words = get_set_from_string(art.title);
         features.push_back(vec);
 
     }
@@ -495,12 +520,22 @@ void dump_feature_vectors(){
     set<string>::const_iterator pos1;
     ofstream ff;
     ofstream ff1;
+    ofstream ff2;
+    ofstream ff3;
     feature_vector f_vec;
     if(conf.gen_fv_set)
-        ff.open ( "feature_vectors");
+        ff.open ( "fv-word-set");
     if(conf.gen_fv_count)
-        ff1.open ( "feature_vectors_count");
-    if ( (conf.gen_fv_set && !ff.is_open()) || (conf.gen_fv_count && !ff1.is_open() ))
+        ff1.open ( "fv-word-count");
+    if(conf.gen_fv_count_sparse)
+        ff2.open ( "fv-word-count-sparse");
+    if(conf.gen_fv_title)
+        ff3.open ( "fv-titular-words");
+    if ( (conf.gen_fv_set && !ff.is_open())
+        || (conf.gen_fv_count && !ff1.is_open() )
+        || (conf.gen_fv_count_sparse && !ff2.is_open() )
+        || (conf.gen_fv_title && !ff3.is_open() )
+        )
     return;
     cout << "Writing Feature vectors" << endl;
     //for(int i =0 ; i < articles.size(); i++ ){
@@ -512,6 +547,12 @@ void dump_feature_vectors(){
 
         if(conf.gen_fv_count)
             ff1 << i+1 << " { ";
+
+        if(conf.gen_fv_count_sparse)
+            ff2 << i+1 << " { ";
+
+        if(conf.gen_fv_title)
+            ff3 << i+1 << " { ";
         // write class labels
         // if config is to generate feature vector set of strings
         if(conf.gen_fv_set){
@@ -526,16 +567,30 @@ void dump_feature_vectors(){
             ff << "}" << endl;
         }
 
-    if(conf.gen_fv_count){
-        for(int j = 0; j < f_vec.counts.size(); j++)
-            ff1 << f_vec.counts.at(j) << " ";
-        ff1 << "}" << endl;
-    }
+        if(conf.gen_fv_count){
+            for(int j = 0; j < f_vec.counts.size(); j++)
+                ff1 << f_vec.counts.at(j) << " ";
+            ff1 << "}" << endl;
+        }
+
+        if(conf.gen_fv_count_sparse){
+            for(int j = 0; j < f_vec.counts.size(); j++)
+                if(f_vec.counts.at(j) != 0) ff2 << j+1 << " (" << f_vec.counts.at(j) << ") ";
+            ff2 << "}" << endl;
+        }
+
+        if(conf.gen_fv_title){
+            for(pos1 = f_vec.titular_words.begin(); pos1 != f_vec.titular_words.end(); ++pos1 )
+                ff3 << *pos1 << " ";
+            ff3 << "}" <<endl;
+        }
 
     }
 
     if(ff.is_open()) ff.close();
     if(ff1.is_open()) ff1.close();
+    if(ff2.is_open()) ff2.close();
+    if(ff3.is_open()) ff3.close();
 
 }
 
@@ -738,10 +793,13 @@ void load_file(){
 
             while( !ff.eof()){//} && ){
                 ff >> name;
+
                 if(name ==  "</REUTERS>")  break;
                 string end_node = "</" + main_nodes[main_index] + ">";
-                string start_node = "<" + main_nodes[main_index] + ">";
+                string start_node = "<" + main_nodes[main_index];//+ ">";
                 if(name.find(end_node) != string::npos) {
+                    cout << name << endl;
+                    cout << accumulator << endl;
                     if(name.find(start_node) != string::npos)
                         accumulator = name;
                     else
@@ -783,6 +841,18 @@ int main()
     load_file();
     //exit(0);
     cout << "Total number of articles : " << articles.size() << endl;
+    int count = 0 ;
+    for(int i =0; i < articles.size(); i++){
+        if(articles.at(i).body == "") {cout << i+1 << " " << articles.at(i).nid << " | "; count++;}
+        //if(i == 29)
+        {
+            print_article(articles.at(i));//for(int)
+        }
+
+    }
+    cout << "count : " << count;
+    //print_article(articles.at(610));
+    exit(0);
     parse_articles();
     cout << "Total number of words : " << words.size() << endl;
 
