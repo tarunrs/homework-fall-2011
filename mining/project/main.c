@@ -36,7 +36,7 @@ struct feature_vector {
 
 struct config {
     bool date, topics, places, people, orgs, exchanges, companies, unknown, title, dateline, body, stopwords, stemwords, limit;
-    bool gen_fv_set, gen_fv_count, gen_fv_count_sparse, gen_fd_file, gen_fd_unique_file, gen_wf_file, gen_wf_unique_file, gen_dimension_file;
+    bool gen_fv_set, gen_fv_count, gen_fv_count_sparse, gen_fd_file, gen_fd_unique_file, gen_wf_file, gen_wf_unique_file, gen_dimension_file, gen_fd_with_strings;
     int threshold_min, threshold_max;
     int dim_limit;
     int num_files;
@@ -50,7 +50,7 @@ vector<article> articles;
 vector<feature_vector> features ;
 multimap<int, int> frequency_distribution;
 multimap<int, int> unique_frequency_distribution;
-set<string> dimentions ;
+set<string> dimensions ;
 config conf;
 
 
@@ -87,9 +87,9 @@ void load_conf(){
             conf.stopwords = (config_value == "yes" ? true : false);
         else if(config_key == "stem-words")
             conf.stemwords = (config_value == "yes" ? true : false);
-        else if(config_key == "limit-dimention")
+        else if(config_key == "limit-dimension")
             conf.limit = (config_value == "yes" ? true : false);
-        else if(config_key == "dimention-size")
+        else if(config_key == "dimension-size")
             conf.dim_limit = atoi(config_value.c_str());
         else if(config_key == "threshold-min")
             conf.threshold_min = atoi(config_value.c_str());
@@ -111,6 +111,8 @@ void load_conf(){
             conf.gen_wf_unique_file= (config_value == "yes" ? true : false);
         else if(config_key == "gen-dimension-file")
             conf.gen_dimension_file = (config_value == "yes" ? true : false);
+        else if(config_key == "gen-fd-with-strings")
+            conf.gen_fd_with_strings= (config_value == "yes" ? true : false);
 
     }
     if (ff.is_open() ) ff.close();
@@ -131,8 +133,8 @@ void print_conf(){
     cout << "\t<Body>  \t" << conf.body << endl;
     cout << "Exclude Stop-Words ? " << conf.stopwords<< endl;
     cout << "Stem Words ? " << conf.stemwords << endl;
-    cout << "Limit Dimention ? " << conf.limit<< endl;
-    cout << "Dimention Size : " << conf.dim_limit<< endl;
+    cout << "Limit Dimension ? " << conf.limit<< endl;
+    cout << "Dimension Size : " << conf.dim_limit<< endl;
     cout << "Threshold Minimum : " << conf.threshold_min<< endl;
     cout << "Threshold Maximum : " << conf.threshold_max<< endl;
 
@@ -353,6 +355,15 @@ string clean_up(string data){
             int end_index = data.find(";") ;
             if(end_index != string::npos) data.erase(start_index, end_index - start_index + 1);
         }
+
+        else if(data.find("/") != string:: npos)
+            data.erase(data.find("/"), 1);
+        else if(data.find("$") != string:: npos)
+            data.erase(data.find("$"), 1);
+        else if(data.find("-") != string:: npos)
+            data.erase(data.find("-"), 1);
+        else if(data.find("+") != string:: npos)
+            data.erase(data.find("+"), 1);
         else break;
     }
     return data;
@@ -375,10 +386,20 @@ void parse_and_enter_into_set(article art){
     string temp;
     map<string, int> candidate_set;
     vector<string> fields;
-    fields.push_back (art.body);
-    fields.push_back (art.title);
-    for(int i=0; i< art.topics.size(); i++)
-        fields.push_back (art.topics.at(i));
+    if(conf.body)
+        fields.push_back (art.body);
+    if(conf.title)
+        fields.push_back (art.title);
+    if(conf.topics)
+        for(int i=0; i< art.topics.size(); i++)
+            fields.push_back (art.topics.at(i));
+    if(conf.places)
+        for(int i=0; i< art.places.size(); i++)
+            fields.push_back (art.places.at(i));
+    if(conf.companies)
+        for(int i=0; i< art.companies.size(); i++)
+            fields.push_back (art.companies.at(i));
+
 
     for(int i = 0; i < fields.size(); i++){
         stringstream ss(fields.at(i));
@@ -410,16 +431,16 @@ void parse_and_enter_into_set(article art){
     candidate_sets.push_back(candidate_set);
 }
 
-void generate_dimention_set(){
-    cout << "Generating dimentions" << endl;
+void generate_dimension_set(){
+    cout << "Generating dimensions" << endl;
     map<string, int>::const_iterator pos;
     for(pos = words_unique.begin(); pos != words_unique.end(); ++pos){
         if(pos->second > conf.threshold_min && pos->second < conf.threshold_max){
-            // above threshold. need to include in the dimention vector
-            dimentions.insert(pos->first);
+            // above threshold. need to include in the dimension vector
+            dimensions.insert(pos->first);
         }
     }
-    cout << "Size of dimention vector : " << dimentions.size() << endl;
+    cout << "Size of dimension vector : " << dimensions.size() << endl;
 }
 
 void generate_feature_vectors(){
@@ -443,10 +464,10 @@ void generate_feature_vectors(){
             // here we need to truncate based on a set of valid words.
             //if(words_unique[pos->first] > 5 && words_unique[pos->first] < 3000 )
              //   vec.words.insert(pair<string, int> (pos->first, pos->second));
-             if(dimentions.find(pos->first) != dimentions.end())
+             if(dimensions.find(pos->first) != dimensions.end())
                 vec.words.insert(pair<string, int> (pos->first, pos->second));
         }
-        for( pos_set = dimentions.begin(); pos_set != dimentions.end(); ++pos_set){
+        for( pos_set = dimensions.begin(); pos_set != dimensions.end(); ++pos_set){
             //cout << *pos_set << endl;
             if(candidate_set.find(*pos_set) != candidate_set.end())
                 vec.counts.push_back(candidate_set[*pos_set]);
@@ -459,12 +480,12 @@ void generate_feature_vectors(){
     }
 }
 
-void dump_dimentions_to_file(){
-    ofstream ff( "dimentions", ios::out );
+void dump_dimensions_to_file(){
+    ofstream ff( "dimensions", ios::out );
     set<string>::const_iterator pos;
     int index = 1;
-    cout << "Writing Dimentions to file" << endl;
-    for(pos = dimentions.begin(); pos != dimentions.end(); ++pos , index++)
+    cout << "Writing Dimensions to file" << endl;
+    for(pos = dimensions.begin(); pos != dimensions.end(); ++pos , index++)
         ff << index << " " << *pos << endl;
 
 }
@@ -479,12 +500,13 @@ void dump_feature_vectors(){
         ff.open ( "feature_vectors");
     if(conf.gen_fv_count)
         ff1.open ( "feature_vectors_count");
-    if ( !ff.is_open() || !ff1.is_open() )
+    if ( (conf.gen_fv_set && !ff.is_open()) || (conf.gen_fv_count && !ff1.is_open() ))
     return;
     cout << "Writing Feature vectors" << endl;
     //for(int i =0 ; i < articles.size(); i++ ){
-    for(int i =0 ; i < 10; i++ ){
+    for(int i =0 ; i < features.size(); i++ ){
         f_vec  = features.at(i);
+        //cout << "Writing: " << endl;
         if(conf.gen_fv_set)
             ff << i+1 << " { ";
 
@@ -530,22 +552,26 @@ void load_stop_words(){
 
 void dump_word_frequencies_to_file(){
     map<string, int>::const_iterator pos;
-    ofstream ff( "word_frequencies", ios::out );
-    if ( !ff.is_open() )
-    return;
-    cout << "Writing word frequencies to file" << endl;
 
-    for(pos = words.begin(); pos != words.end(); ++pos)
-        ff <<pos->first<<' ' << pos->second << " " << endl;
-    ff.close();
+    if(conf.gen_wf_file){
+        ofstream ff( "word_frequencies", ios::out );
+        if ( !ff.is_open() )
+        return;
+        cout << "Writing word frequencies to file" << endl;
 
-    ofstream ff1( "unique_word_frequencies", ios::out );
-    if ( !ff1.is_open() )
-    return;
-    for(pos = words_unique.begin(); pos != words_unique.end(); ++pos)
-        ff1 <<pos->first<<' ' << pos->second << " " << endl;
-    ff1.close();
+        for(pos = words.begin(); pos != words.end(); ++pos)
+            ff <<pos->first<<' ' << pos->second << " " << endl;
+        ff.close();
 
+    }
+    if(conf.gen_wf_unique_file){
+        ofstream ff1( "unique_word_frequencies", ios::out );
+        if ( !ff1.is_open() )
+        return;
+        for(pos = words_unique.begin(); pos != words_unique.end(); ++pos)
+            ff1 <<pos->first<<' ' << pos->second << " " << endl;
+        ff1.close();
+    }
 }
 
 void dump_frequency_distribution_to_file(){
@@ -553,58 +579,91 @@ void dump_frequency_distribution_to_file(){
     multimap<int, int>::const_iterator pos1;
     multimap<int, int>::const_iterator pos2;
 
-    ofstream ff( "frequency_distribution", ios::out );
-    ofstream ff1( "unique_frequency_distribution", ios::out );
+    ofstream ff, ff1;
+    if(conf.gen_fd_file)
+        ff.open( "frequency_distribution");
+    if(conf.gen_fd_unique_file)
+        ff1.open( "unique_frequency_distribution");
 
-    if ( !ff.is_open() || !ff1.is_open() )
+    if ( (conf.gen_fd_file && !ff.is_open() )|| ( conf.gen_fd_unique_file && !ff1.is_open() ))
         return;
 
     cout << "Writing frequency distribution to file" << endl;
-    pos1 = frequency_distribution.end();
-    pos2 = unique_frequency_distribution.end();
-    pos1--;
-    pos2--;
-    for(; pos1 != frequency_distribution.begin(); pos1--, pos2--){
+
+    if(conf.gen_fd_file){
+        pos1 = frequency_distribution.end();
+        pos1--;
+        for(; pos1 != frequency_distribution.begin(); pos1--){
+            ff << pos1->first <<' ' << pos1->second << endl;
+        }
         ff << pos1->first <<' ' << pos1->second << endl;
-        ff1 << pos2->first <<' ' << pos2->second << endl;
+        if(ff.is_open()) ff.close();
     }
 
-    ff << pos1->first <<' ' << pos1->second << endl;
-    ff1 << pos2->first <<' ' << pos2->second << endl;
-    ff.close();
-    ff1.close();
+
+    if(conf.gen_fd_file){
+        pos2 = unique_frequency_distribution.end();
+        pos2--;
+        for(; pos2 != unique_frequency_distribution.begin(); pos2--){
+            ff1 << pos2->first <<' ' << pos2->second << endl;
+        }
+
+        ff1 << pos2->first <<' ' << pos2->second << endl;
+        if(ff1.is_open()) ff1.close();
+    }
+
 }
 
 void dump_frequency_distribution_to_file_with_strings(){
-    map<string, int>::const_iterator pos;
+        map<string, int>::const_iterator pos;
     multimap<int, int>::const_iterator pos1;
     multimap<int, int>::const_iterator pos2;
 
-    ofstream ff( "frequency_distribution", ios::out );
-    ofstream ff1( "unique_frequency_distribution", ios::out );
+    ofstream ff, ff1;
+    if(conf.gen_fd_file)
+        ff.open( "frequency_distribution");
+    if(conf.gen_fd_unique_file)
+        ff1.open( "unique_frequency_distribution");
 
-    if ( !ff.is_open() || !ff1.is_open() )
+    if ( (conf.gen_fd_file && !ff.is_open() )|| ( conf.gen_fd_unique_file && !ff1.is_open() ))
         return;
 
-    cout << "Writing frequency distribution (+ strings) to file" << endl;
-    pos1 = frequency_distribution.end();
-    pos2 = unique_frequency_distribution.end();
-    pos1--;
-    pos2--;
-    for(; pos1 != frequency_distribution.begin(); pos1--, pos2--){
+    cout << "Writing frequency distribution to file" << endl;
+
+    if(conf.gen_fd_file){
+        pos1 = frequency_distribution.end();
+        pos1--;
+        for(; pos1 != frequency_distribution.begin(); pos1--){
+            pos = words.begin();
+            std::advance(pos, pos1->second);
+            ff << pos1->first <<' ' << pos1->second << " " << pos->first << endl;
+        //            ff << pos1->first <<' ' << pos1->second << endl;
+        }
         pos = words.begin();
         std::advance(pos, pos1->second);
         ff << pos1->first <<' ' << pos1->second << " " << pos->first << endl;
+        //ff << pos1->first <<' ' << pos1->second << endl;
+        if(ff.is_open()) ff.close();
+    }
+
+
+    if(conf.gen_fd_file){
+        pos2 = unique_frequency_distribution.end();
+        pos2--;
+        for(; pos2 != unique_frequency_distribution.begin(); pos2--){
+            pos = words_unique.begin();
+            std::advance(pos, pos2->second);
+            ff1 << pos2->first <<' ' << pos2->second << " " << pos->first << endl;
+            //ff1 << pos2->first <<' ' << pos2->second << endl;
+        }
         pos = words_unique.begin();
         std::advance(pos, pos2->second);
         ff1 << pos2->first <<' ' << pos2->second << " " << pos->first << endl;
+        //ff1 << pos2->first <<' ' << pos2->second << endl;
+        if(ff1.is_open()) ff1.close();
     }
-    pos = words.begin();
-    std::advance(pos, pos1->second);
-    ff << pos1->first <<' ' << pos1->second << " " << pos->first << endl;
-    ff1 << pos2->first <<' ' << pos2->second << " " << pos->first << endl;
-    ff.close();
-    ff1.close();
+// ends
+
     cout << endl;
 }
 
@@ -728,16 +787,22 @@ int main()
     cout << "Total number of words : " << words.size() << endl;
 
     create_frequency_distribution();
-    dump_word_frequencies_to_file();
-    //dump_frequency_distribution_to_file_with_strings();
-    dump_frequency_distribution_to_file();
+
+    if(conf.gen_wf_file || conf.gen_wf_unique_file)
+        dump_word_frequencies_to_file();
+
+    if(conf.gen_fd_with_strings)
+        dump_frequency_distribution_to_file_with_strings();
+    else
+        dump_frequency_distribution_to_file();
 
     clkend = rtclock();
     t = clkend-clkbegin;
     cout << "Time: " << t << "sec " <<endl;
 
-    generate_dimention_set();
-    dump_dimentions_to_file();
+    generate_dimension_set();
+    if(conf.gen_dimension_file)
+        dump_dimensions_to_file();
 
     clkbegin = rtclock();
     generate_feature_vectors();
@@ -745,7 +810,7 @@ int main()
     dump_feature_vectors();
 
     if(conf.gen_dimension_file)
-        dump_dimentions_to_file();
+        dump_dimensions_to_file();
 
     clkend = rtclock();
     t = clkend-clkbegin;
