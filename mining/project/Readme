@@ -1,0 +1,62 @@
+Assignment - 1 : Generation of feature-vectors
+==============================================
+
+Note: The program has been tested on STDSUN for the "config" file included. The "config" included uses only the first 10 files of the dataset. The program aborts when all the files are included. 
+
+Benchmark:
+The program runs on my laptop in 110 seconds for the entire dataset (22 files).
+On STDSUN
+
+To compile run:
+$ make
+
+To run the algorithm run:
+$ ./mine
+
+To delete compiled files and results run:
+$ make clean
+
+Results can be found in the "results" folder
+Data set can be found in the "dataset" directory
+Config file can be found in the current directory (filename : "config")
+
+The config file can be used to alter the behaviour of the algorithm and generation of feature-vectors.
+
+Important flags and variables to consider in config file:
+ - num-files
+ - stem-words
+ - threshold-min
+ - threshold-max
+ - gen-*
+
+config file details:
+====================
+
+num-files 22  		Number of files from the dataset to use. Cannot be more than 22.
+include-date no  	Include the contents of the <DATE> element for feature-vector generation 
+include-topics yes  	Include the contents of the <TOPICS> element for feature-vector generation
+include-places yes  	Include the contents of the <PLACES> element for feature-vector generation
+include-people no  	Include the contents of the <PEOPLE> element for feature-vector generation
+include-orgs no  	Include the contents of the <ORGS> element for feature-vector generation
+include-exhanges no  	Include the contents of the <EXCHANGES> element for feature-vector generation
+include-companies yes   Include the contents of the <COMPANIES> element for feature-vector generation
+include-title yes  	Include the contents of the <TITLE> element for feature-vector generation
+include-dateline no  	Include the contents of the <DATELINE> element for feature-vector generation
+include-body yes  	Include the contents of the <BODY> element for feature-vector generation
+stop-words yes  	Eliminate stop words *(Not used)
+stem-words yes  	Apply word stemming
+limit-dimension no  	Flag to limit size of the dimension *(Not used)
+dimension-size 1000  	Size of the dimension *(Not used)
+threshold-min 10  	Set minimum threshold frequency
+threshold-max 2000  	Set maximum threshold frequency
+gen-fv-set yes  	Flag to generate feature-vector of words
+gen-fv-title yes  	Flag to generate titular words feature-vector
+gen-fv-count no  	Flag to generate feature-vector of word-frequencies *Not recommended. Takes a long time and generates a very large file.
+gen-fv-count-sparse yes Flag to generate feature-vector of word-indexes + word frequencies (This is the sparse representation of the above feature-vector)
+gen-fd-with-strings no  Flag to control whether the "word" should be printed in the frequency distribution file
+gen-fd-file no   	Flag to generate the frequency distribution of words ()
+gen-fd-unique-file yes  Flag to generate the frequency distribution of unique words (i.e unique word occurences in articles)
+gen-wf-file no  	Flag to generate the word frequencies (i.e unique word occurences in articles)
+gen-wf-unique-file yes	Flag to generate the unique word frequencies 
+gen-dimension-file yes	Flag to generate the dimensions (i.e the word and the word-index. This index is used in the sparse representation on the frequency feature vector.)
+

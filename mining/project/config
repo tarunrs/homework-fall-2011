@@ -1,4 +1,6 @@
 num-files 22
+num-arff-data 10000
+gen-random 1
 include-date no
 include-topics yes
 include-places yes
@@ -13,7 +15,7 @@ stop-words yes
 stem-words yes
 limit-dimension no
 dimension-size 1000
-threshold-min 10
+threshold-min 200
 threshold-max 2000
 gen-fv-set yes
 gen-fv-title yes
