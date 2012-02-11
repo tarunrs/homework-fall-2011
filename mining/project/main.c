@@ -13,16 +13,19 @@
 #include <locale>
 #include <sys/time.h>
 #include <time.h>
+#include <math.h>
 
 #include <string.h>
 #include <stdlib.h>      /* for malloc, free */
 #include <ctype.h>       /* for isupper, islower, tolower */
 
+#define BITMAP_SIZE 3000/8
 static char s[1024];         /* a char * (=string) pointer; passed into b above */
 extern int stem(char * p, int i, int j);
 using namespace std;
 string main_nodes[] = { "DATE", "TOPICS", "PLACES", "PEOPLE", "ORGS", "EXCHANGES", "COMPANIES", "UNKNOWN", "TEXT"};
 string text_nodes[] = {"TITLE", "DATELINE", "BODY"};
+
 
 struct article {
     int oid, nid;
@@ -31,11 +34,67 @@ struct article {
 } ;
 
 struct feature_vector {
+    int doc_id;
     set <string> class_labels;
     map <string, int> words;
+    map <int, int> word_index;
     vector <int> counts;
     set <string> titular_words;
 };
+
+
+struct doc_bitmap {
+    int doc_id;
+    char bitmap[BITMAP_SIZE];
+    int cluster_id;
+    int count;
+    set <string> class_labels;
+    int temp_count;
+};
+
+int bitcount_in_byte (unsigned char n) {
+   int count = 0;
+   while (n) {
+      count += n & 0x1u;
+      n >>= 1;
+   }
+   return count;
+}
+
+int bitcount(char * bitmap_array){
+    //cout << "counting "<< endl;
+	int num = BITMAP_SIZE;
+	long count=0;
+	for(int i=0; i< num; i++){
+	    //cout << count << endl;
+		count+= bitcount_in_byte(bitmap_array[i]);
+	}
+	return count;
+}
+
+void and_bitmap(char * dest_bitmap_array, char * first_bitmap_array, char * second_bitmap_array){
+	int num = BITMAP_SIZE;
+	long count=0;
+	for(int i=0; i< num; i++){
+		dest_bitmap_array[i] = first_bitmap_array[i] & second_bitmap_array[i];
+	}
+}
+
+void or_bitmap(char * dest_bitmap_array, char * first_bitmap_array, char * second_bitmap_array){
+	int num =  BITMAP_SIZE;
+	long count=0;
+	for(int i=0; i< num; i++){
+		dest_bitmap_array[i] = first_bitmap_array[i] | second_bitmap_array[i];
+	}
+}
+
+void copy_bitmap(char * dest_bitmap_array, char * source_bitmap_array){
+	int num =  BITMAP_SIZE;
+	long count=0;
+	for(int i=0; i< num; i++){
+		dest_bitmap_array[i] = source_bitmap_array[i];
+	}
+}
 
 struct config {
     bool date, topics, places, people, orgs, exchanges, companies, unknown, title, dateline, body, stopwords, stemwords, limit;
@@ -53,6 +112,7 @@ set <string> stop_words;
 set <string> class_labels;
 vector<article> articles;
 vector<feature_vector> features ;
+vector<doc_bitmap> doc_bitmaps;
 multimap<int, int> frequency_distribution;
 multimap<int, int> unique_frequency_distribution;
 set<string> dimensions ;
@@ -162,18 +222,7 @@ void print_conf(){
 
 
 }
-/*
-struct word_freqency {
-    string word;
-    int count;
-};
 
-struct compare_words {
-  bool operator()(const word_freqency& x, const word_freqency& y) const {
-    return x.word < y.word;
- }
-};
-*/
 void print_article(article a){
     unsigned int i;
     //"PEOPLE", "ORGS", "EXCHANGES", "COMPANIES", "UNKNOWN", "TEXT"
@@ -524,13 +573,15 @@ void generate_arff_file(){
         ff << "}" << endl << "@DATA" << endl;// << "{";
         ff1 << "}" << endl << "@DATA" << endl;// << "{";
     cout << "Number of records generating: " << conf.num_arff_data << endl;
-    //for(unsigned int i =0 ; i < conf.num_arff_data; ){ //uncomment is random sampling
-    for(unsigned int i =0 ; i < features.size(); i++){
-        //int ran = rand() %  features.size(); //uncomment is random sampling
+    int temp_test_count = 0;
+    for(unsigned int i =0 ; i < conf.num_arff_data; ){ //uncomment is random sampling
+    //for(unsigned int i =0 ; i < features.size(); i++){
+        int ran = rand() %  features.size(); //uncomment is random sampling
 
-        //f_vec  = features.at(ran); //uncomment is random sampling
-        f_vec  = features.at(i);
-        if(f_vec.class_labels.size() == 0) {
+        f_vec  = features.at(ran); //uncomment is random sampling
+        //f_vec  = features.at(i);
+        if (f_vec.words.size() == 0) continue;
+        if(f_vec.class_labels.size() == 0 && temp_test_count <100) {
             ff1 << "{" ;
             for(j = 0; j < f_vec.counts.size(); j++)
                 if(f_vec.counts.at(j) != 0)
@@ -545,14 +596,20 @@ void generate_arff_file(){
             if(temp.length() > 2)
                 temp.erase(temp.length()-2);
             ff1 << temp << "}" << endl;
-            ff2 << i + 1 << endl;
-            //ff2 << ran+1 << endl;
+            //ff2 << i + 1 << endl;
+            ff2 << ran+1 << endl; // uncomment if random
+            ff2 << articles.at(ran).title << endl;// uncomment if random
+            ff2 << articles.at(ran).body << endl;// uncomment if random
+            //ff2 << articles.at(i).title << endl;
+            //ff2 << articles.at(i).body << endl;
+
+            temp_test_count++;
             //ff1 <<  endl;
         }
         //if(f_vec.)
         else{
             //for(pos = f_vec.class_labels.begin(); pos != f_vec.class_labels.end(); ++pos){
-            cout <<i<< " ";
+            //cout <<i<< " ";
             pos = f_vec.class_labels.begin();
             ff << "{" ;
             for(j = 0; j < f_vec.counts.size(); j++)
@@ -564,7 +621,7 @@ void generate_arff_file(){
             for(pos = f_vec.class_labels.begin(); pos != f_vec.class_labels.end() && temp_ind < random_num; ++pos, temp_ind++) {};
 
             ff << j << " \""<< *pos << "\"}" << endl;
-            //i++; // uncomment of random
+            i++; // uncomment of random
             //}
         }
     }
@@ -972,10 +1029,74 @@ void load_file(){
     }
 
 }
+void init_bitmap(char * bmap){
+    for(int i = 0; i < BITMAP_SIZE; i++)
+        bmap[i] = 0;
+}
+
+void set_bitmap(char * bmap, long pos){
+	bmap[pos/8] = bmap[pos/8] | (int)pow(2,7 - (pos%8));
+}
+
+
+void read_feature_vectors(){
+    ifstream ff( "results/fv-word-count-sparse", ios::in );
+    string temp;
+    int c=0;
+    doc_bitmap temp_dmap;
+    if ( !ff.is_open() )
+         {cout << "Could not open feature vector file" ; exit(-1);}
+    cout << "Loading feature vectors" <<endl;
+
+    while( !ff.eof() ){
+        ff >> temp;
+        temp_dmap.doc_id = atoi(temp.c_str());
+        init_bitmap(temp_dmap.bitmap);
+        temp_dmap.class_labels.clear();
+        temp_dmap.cluster_id = -1;
+        temp_dmap.count = 0;
+        temp_dmap.temp_count = 0;
+        ff >> temp;
+        if(temp == "{"){
+            while(temp != "},"){
+                // read the topics
+                ff >> temp;
+                //cout << temp << " ";
+                if(temp.size() > 2)
+                    temp_dmap.class_labels.insert(temp.c_str());
+
+            }
+        }
+        // done with class labels.
+        // insert count of words
+        ff >> temp; // "{"
+        ff >> temp; // "number of words"
+        temp_dmap.count = atoi(temp.c_str());
+        ff >> temp; // "}"
+        //insert feature words
+        ff >> temp;
+        if(temp== "{"){
+            ff >> temp;
+            while(temp != "}"){
+                // read the topics
+
+                //if(temp.size() > 2)
+                set_bitmap(temp_dmap.bitmap, atoi(temp.c_str()));
+                temp_dmap.temp_count++;
+                ff >> temp; // "number in brackets of the count"
+                //cout << temp << " ";
+
+                ff >> temp; // " next word"
+            }
+        }
+        doc_bitmaps.push_back(temp_dmap);
+        //cout << c++ <<  endl;
+    }
+}
 
 int main()
 {
-    double clkbegin, clkend, t;
+    /*double clkbegin, clkend, t;
     srand (time(NULL));
     load_stop_words();
     load_conf();
@@ -993,6 +1114,8 @@ int main()
     //print_article(articles.at(610));
     //exit(0);
     */
+ //   */
+/*
     parse_articles();
     cout << "Total number of words : " << words.size() << endl;
 
@@ -1025,6 +1148,22 @@ int main()
     clkend = rtclock();
     t = clkend-clkbegin;
     cout << "Time: " << t << "sec " <<endl;
-
+*/
+    read_feature_vectors();
+    cout << "asdad"<< endl;
+    cout << doc_bitmaps.at(5).class_labels.size()<< endl;
+    cout << bitcount(doc_bitmaps.at(5).bitmap);
     return 0;
 }
+
+
+
+
+
+
+
+
+
+
+
+
