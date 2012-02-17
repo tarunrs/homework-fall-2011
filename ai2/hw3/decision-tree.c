@@ -57,7 +57,7 @@ void print_training_data(){
 
 int count(int data[][10], vector<int> &indexes, int rest_index){
     int count = 0;
-    for(int i = 0; i < indexes.size(); i++){
+    for(unsigned int i = 0; i < indexes.size(); i++){
         if(data[indexes.at(i)][9] == rest_index) count++;
     }
     return count;
@@ -79,7 +79,7 @@ int homogeneous_class_labels(int data[][10], vector<int> &indexes){
     int num_zeroes = 0;
     count_class_labels(data, counts, indexes);
     cout << "Count : "<< counts.size() << endl;
-    for(int i=0; i < counts.size(); i++){
+    for(unsigned int i=0; i < counts.size(); i++){
         if(counts.at(i) == 0)
             num_zeroes++;
         else
@@ -90,7 +90,7 @@ int homogeneous_class_labels(int data[][10], vector<int> &indexes){
 }
 
 void print_counts(vector<int> &counts){
-    for(int i = 0; i < counts.size(); i++)
+    for(unsigned int i = 0; i < counts.size(); i++)
         cout << "Counts of class label " << i << ": " << counts.at(i) << endl;
 
 }
@@ -99,21 +99,21 @@ double entropy(int data[][10], vector<int> &indexes){
     vector<int> counts;
     int total = 0;
     count_class_labels(data, counts, indexes);
-    for(int i=0; i < counts.size(); i++){
+    for(unsigned int i=0; i < counts.size(); i++){
         total += counts.at(i);
     }
     double ent = 0;
-    for(int i = 0; i < counts.size(); i++){
+    for(unsigned int i = 0; i < counts.size(); i++){
         double prob = (double)counts.at(i)/(double)total;
         if(prob != 0)
-            ent += (-1) * prob * log2(prob);
+            ent += (-1) * prob * log(prob) / log(2);
         //cout << "Prob : " << prob;
     }
     return ent;
 }
 
 int find_optimal_split(int training_data[][10], vector<int> indexes, set <int> used_columns){
-    int total_tuple_in_parent = indexes.size();
+//    int total_tuple_in_parent = indexes.size();
     int col;
     double min_entropy = FLT_MAX;
     int optimal_col = -1;
@@ -122,7 +122,7 @@ int find_optimal_split(int training_data[][10], vector<int> indexes, set <int> u
 
         vector<int> temp_indexes[choices[col]];
 
-        for(int i = 0; i < indexes.size(); i++){
+        for(unsigned int i = 0; i < indexes.size(); i++){
             temp_indexes[training_data[indexes.at(i)][col]].push_back(indexes.at(i));
         }
         vector <double> entropies;
@@ -164,7 +164,7 @@ void construct_tree(tree_node * parent, set<int> used_columns){
     if(split_col == -1) return; // done with all the columns
     vector<int> temp_indexes[choices[split_col]];
 //    cout << choices[split_col] << endl;
-    for(int i = 0; i < parent->partition_indexes.size(); i++){
+    for(unsigned int i = 0; i < parent->partition_indexes.size(); i++){
         temp_indexes[training_data[parent->partition_indexes.at(i)][split_col]].push_back(parent->partition_indexes.at(i));
     }
     cout << "Split col : " << split_col << endl;
@@ -203,9 +203,10 @@ void print_tree(tree_node * parent, int level){
 }
 
 int classify(tree_node* node, int test[10]){
-    if(node->column == -1) return node->decision;
+    if(node->column == -1) 
+        return node->decision;
     classify(node->children.at(test[node->column]), test);
-
+    //return -1;
 }
 
 int main(){
@@ -234,7 +235,7 @@ int main(){
     set<int> used_columns;
     construct_tree(root, used_columns);
     print_tree(root, 0);
-    int test[] = { 0,2,1,0,1,1,1,2,1,0};
+
     int diff_count = 0;
     for(int i =0 ; i<50; i++){
         int predicted_label = classify(root, test_data[i]);
