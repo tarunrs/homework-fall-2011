@@ -1,0 +1,4 @@
+num-clusters 20
+dimension-size 1506
+min-points 50
+radius 0.1
