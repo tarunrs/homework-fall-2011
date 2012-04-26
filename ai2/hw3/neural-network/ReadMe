@@ -1,0 +1,23 @@
+Read Me: CSE 730 - Assignment 3 - Perceptron Training
+            (Tarun Ronur Sasikumar)
+=====================================================
+
+This program has been compiled and tested on STDLOGIN. 
+
+To compile the program:
+$ make
+
+To run the program:
+
+$ ./neural-network <alpha> <bias> <initial-weight> <number-of-iterations>
+  <alpha>             - Learning Rate
+  <bias>              - Value for weight w0
+  <initial-weight>    - Initial value for all the other weights
+  <num-of-iterations> - Maximum number of iterations that the program should run incase the weights do not converge.
+
+Example: ./neural-network 0.001 0 0 100000
+            Here: Alpha = 0.001
+                  Bias = 0
+                  Initial Weight = 0
+                  Number of iterations = 100000
+

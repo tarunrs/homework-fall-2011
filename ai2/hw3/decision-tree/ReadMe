@@ -1,0 +1,13 @@
+Read Me: CSE 730 - Assignment 3 - Decision Tree
+            (Tarun Ronur Sasikumar)
+=====================================================
+
+This program has been compiled and tested on STDLOGIN. 
+
+To compile the program:
+$ make
+
+To run the program:
+$ ./decision-tree
+
+
